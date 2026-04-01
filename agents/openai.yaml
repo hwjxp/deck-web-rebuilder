@@ -1,0 +1,4 @@
+interface:
+  display_name: "Deck Web Rebuilder"
+  short_description: "Faithful bilingual deck-to-web rebuilder."
+  default_prompt: "Use $deck-web-rebuilder to fully understand this deck, rebuild its storyline and assets, and produce a faithful interactive bilingual web version."
