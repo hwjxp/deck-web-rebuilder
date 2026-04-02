@@ -18,11 +18,15 @@ from check_redundancy import run_check as run_redundancy_check
 
 
 REQUIRED_FILES = [
+    Path("00-source/input-profile.md"),
+    Path("00-source/visual-regions.json"),
     Path("10-understanding/deck-brief.md"),
     Path("12-reference-study/reference-deck-notes.md"),
     Path("12-reference-study/reference-deck-notes.yaml"),
     Path("20-logic/storyline.md"),
+    Path("20-logic/confidence-report.md"),
     Path("30-assets/asset-register.md"),
+    Path("30-assets/asset-lineage.json"),
     Path("35-strategy/rebuild-strategy.md"),
     Path("35-strategy/deck-design-system.md"),
     Path("35-strategy/deck-design-system.json"),
@@ -116,6 +120,18 @@ def check_deck_brief(path: Path) -> list[str]:
     return issues
 
 
+def check_input_profile(path: Path) -> list[str]:
+    text = read_text(path)
+    lowered = text.lower()
+    issues: list[str] = []
+    for keyword in ("input mode", "source-of-truth", "normalization plan"):
+        if keyword not in lowered:
+            issues.append(f"input-profile.md should explicitly include `{keyword}`")
+    if "visual" not in lowered:
+        issues.append("input-profile.md should note the role of visual parsing for this source")
+    return issues
+
+
 def check_design_system_markdown(path: Path) -> list[str]:
     text = read_text(path)
     issues: list[str] = []
@@ -123,6 +139,8 @@ def check_design_system_markdown(path: Path) -> list[str]:
         issues.append("deck-design-system.md should define real typography tokens such as `--font` or `font-size`")
     if "title" not in text.lower() or "bilingual" not in text.lower():
         issues.append("deck-design-system.md should include title and bilingual rules, not only mood-board prose")
+    if "title band" not in text.lower() and "title-band" not in text.lower():
+        issues.append("deck-design-system.md should define a title-band system, not only local title styling")
     return issues
 
 
@@ -132,6 +150,18 @@ def check_reference_notes_yaml(path: Path) -> list[str]:
     for token in ("reference_deck_notes:", "shell:", "page_archetypes:", "text_image_contract:", "anti_patterns:"):
         if token not in text:
             issues.append(f"reference-deck-notes.yaml should include `{token}`")
+    return issues
+
+
+def check_confidence_report(path: Path) -> list[str]:
+    text = read_text(path)
+    lowered = text.lower()
+    issues: list[str] = []
+    for keyword in ("high", "medium", "low"):
+        if keyword not in lowered:
+            issues.append(f"confidence-report.md should explicitly include `{keyword}` confidence")
+    if "follow-up" not in lowered and "next action" not in lowered and "action" not in lowered:
+        issues.append("confidence-report.md should note follow-up actions for uncertain slides or relations")
     return issues
 
 
@@ -151,6 +181,53 @@ def check_pilot_selection(path: Path) -> list[str]:
     return []
 
 
+def check_visual_regions_json(workspace: Path) -> list[str]:
+    issues: list[str] = []
+    relative = Path("00-source/visual-regions.json")
+    try:
+        data = load_workspace_json(workspace, relative)
+    except Exception as exc:
+        return [f"could not read {relative}: {exc}"]
+
+    slides = data.get("slides", [])
+    if not slides:
+        return ["visual-regions.json should contain at least one slide or page parse"]
+
+    total_regions = 0
+    for slide in slides:
+        regions = slide.get("regions", [])
+        total_regions += len(regions)
+        for region in regions:
+            if "type" not in region or "confidence" not in region:
+                issues.append("visual-regions.json regions should include at least `type` and `confidence`")
+                return issues
+    if total_regions == 0:
+        issues.append("visual-regions.json should contain actual visual regions, not only slide shells")
+    return issues
+
+
+def check_asset_lineage_json(workspace: Path) -> list[str]:
+    issues: list[str] = []
+    relative = Path("30-assets/asset-lineage.json")
+    try:
+        data = load_workspace_json(workspace, relative)
+    except Exception as exc:
+        return [f"could not read {relative}: {exc}"]
+
+    assets = data.get("assets", [])
+    if not assets:
+        return ["asset-lineage.json should contain at least one asset lineage record"]
+
+    for asset in assets:
+        if not asset.get("source_region_ids"):
+            issues.append("asset-lineage.json assets should record `source_region_ids`")
+            break
+        if not asset.get("chosen_action"):
+            issues.append("asset-lineage.json assets should record `chosen_action`")
+            break
+    return issues
+
+
 def check_design_system_json(workspace: Path) -> list[str]:
     issues: list[str] = []
     try:
@@ -163,12 +240,28 @@ def check_design_system_json(workspace: Path) -> list[str]:
     issues.extend(maybe_validate_with_jsonschema(data, DESIGN_SCHEMA))
 
     title_wrap = data.get("typography", {}).get("title_wrapping", {})
-    if title_wrap.get("min_title_container_ratio", 0) < 0.55:
-        issues.append("deck-design-system.json sets a title container ratio below 55%")
+    if title_wrap.get("min_title_container_ratio", 0) < 0.6:
+        issues.append("deck-design-system.json should target a title container ratio of at least 60%")
 
     fallback_order = title_wrap.get("fallback_order", [])
     if fallback_order[:3] != ["rewrite", "restack", "widen-title-region"]:
         issues.append("deck-design-system.json should prioritize rewrite -> restack -> widen-title-region before shrinking")
+
+    title_band = data.get("title_band", {})
+    if title_band.get("min_width_ratio", 0) < 0.6:
+        issues.append("deck-design-system.json should keep the title band above 60% width on ordinary slides")
+    if not title_band.get("prefer_single_line", False):
+        issues.append("deck-design-system.json should prefer single-line titles by default on body slides")
+
+    grid = data.get("grid", {})
+    if grid.get("columns") != 8:
+        issues.append("deck-design-system.json should use an 8-column base slide grid")
+    outer_margin = grid.get("outer_margin", {})
+    expected_margins = {"mobile": "16px", "tablet": "24px", "desktop": "32px"}
+    if outer_margin != expected_margins:
+        issues.append("deck-design-system.json should define outer margins as 16px / 24px / 32px for mobile / tablet / desktop")
+    if grid.get("content_max_width") != "1280px":
+        issues.append("deck-design-system.json should set `content_max_width` to `1280px`")
 
     language_toggle = data.get("page_chrome", {}).get("language_toggle", "").lower()
     if "toggle" not in language_toggle:
@@ -252,11 +345,15 @@ def main() -> int:
     content_issues: list[str] = []
     script_issues: list[str] = []
     if not missing:
+        content_issues.extend(check_input_profile(workspace / "00-source/input-profile.md"))
         content_issues.extend(check_deck_brief(workspace / "10-understanding/deck-brief.md"))
         content_issues.extend(check_reference_notes_yaml(workspace / "12-reference-study/reference-deck-notes.yaml"))
+        content_issues.extend(check_confidence_report(workspace / "20-logic/confidence-report.md"))
         content_issues.extend(check_design_system_markdown(workspace / "35-strategy/deck-design-system.md"))
         content_issues.extend(check_page_specs_markdown(workspace / "40-rebuild/page-specs.md"))
         content_issues.extend(check_pilot_selection(workspace / "40-rebuild/pilot-selection.md"))
+        content_issues.extend(check_visual_regions_json(workspace))
+        content_issues.extend(check_asset_lineage_json(workspace))
         script_issues = run_script_checks(workspace)
 
     deck_issues = inspect_generated_deck(workspace)

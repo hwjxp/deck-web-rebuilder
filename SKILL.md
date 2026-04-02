@@ -7,19 +7,33 @@ description: Rebuild existing presentation decks (`.ppt`, `.pptx`, `.key`, expor
 
 ## Overview
 
-Use this skill to turn an existing deck into a web presentation without losing its message, logical structure, or required visual relationships. The target output is a web-based presentation, not a conventional landing page, blog, or long scrolly document. Read the entire deck first, build the storyline second, and rebuild the web deck only after the deck brief, logic model, and asset register are complete. When internal reference decks are available, study them before choosing a visual direction. For non-trivial decks, build a five-slide pilot before scaling to the full rebuild.
+Use this skill to turn slide-like source material into a web presentation without losing its message, logical structure, or required visual relationships. The target output is a web-based presentation, not a conventional landing page, blog, or long scrolly document. Work like a human editor-designer: first understand the whole deck, then model the logic, then decide the page system, and only then rebuild. Regardless of input type, create a visual parse and a stable deck intermediate representation before redesign begins.
+
+This skill supports three execution modes:
+
+- `polish`: the source deck is already written; improve the design and rebuild it for the web without breaking its logic
+- `reverse-engineer`: the source is a PDF, screenshot set, or visually complete artifact; infer structure from the rendered pages and rebuild it faithfully
+- `editorial-compose`: the source is loose copy and assets; reorganize the material into a coherent deck before rebuilding
+
+When internal reference decks are available, study them before choosing a visual direction. For non-trivial decks, build a five-slide pilot before scaling to the full rebuild.
 
 ## Non-Negotiables
 
 - Read the whole deck before editing anything.
 - Do not work slide by slide from the start. First understand the deck-level message, audience, occasion, and persuasion goal.
+- Detect the input mode first: `polish`, `reverse-engineer`, or `editorial-compose`.
 - Work top-down: `storyline -> layout -> content`.
+- Build a visual parse even when source object data exists. Rendered pages are the ground truth for composition, grouping, and emphasis.
+- Keep an explicit source-of-truth order: source object layer > rendered slide/page > OCR text > inference.
+- Track uncertainty. If diagram logic, grouping, or text-image mapping is only partly inferred, mark the confidence before redesigning.
 - Treat the output as a browser-based slide deck, not a normal web page. Preserve slide cadence, frame boundaries, and presenter-controlled reading order.
 - Keep each slide as a strict, viewport-bounded frame. Default to a 16:9 container that fits within the active viewport without native browser scrolling.
 - Commit to a clear visual direction before implementation. Do not drift into a safe but generic deck-to-web template.
 - If the user provides internal reference decks, study them deck-wide before deciding style. Learn the page system, not just isolated visual tricks.
 - Treat image handling as data cleaning. Decide what to keep, crop, redraw, translate, or remove before restyling.
 - Preserve necessary logic relationships: deck flow, page flow, text-image mapping, diagram sequence, evidence-to-claim links, comparison structure, and step order.
+- Preserve or reconstruct build order when the source implies sequential reveals. Do not flatten a staged argument into one simultaneous dump.
+- Keep asset lineage. Every extracted or sliced asset should stay traceable to a source page and region.
 - Reconstruct slide layouts proportionally. Prefer CSS Grid or Flexbox ratios, named zones, and percentage or `fr` mappings over fixed-pixel absolute placement for major content blocks.
 - Scale type, padding, and gaps with the slide container. Prefer container-query units or other slide-relative units so typography shrinks and grows with the canvas instead of drifting independently.
 - On small screens, degrade like a presentation. First scale the whole slide, then trim decoration, and only reflow as a last resort while still keeping one slide inside one viewport.
@@ -27,6 +41,7 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Optimize the source language first. Add the bilingual layer only after the source copy is clear.
 - Reject visually anonymous output. The rebuilt deck should show deliberate composition, hierarchy, spacing rhythm, and typography instead of generic cardification.
 - Do not expand to the whole deck immediately. Build a five-slide representative pilot first unless the user explicitly asks to skip this gate.
+- Default to a slide-spanning headline band. Most body slides should prefer a single-line title if it fits naturally; do not force wrapping just to manufacture drama.
 - Do not force narrow title columns just to manufacture drama. Title breaks must feel intentional in both English and Chinese, and should survive language toggle without awkward wrapping.
 - Do not repeat orientation devices unnecessarily. If the cover, chrome, or navigation already explains the deck structure, a second full agenda page must add a new framing job or be removed.
 - On analytical pages, pick one primary proof device. If a diagram already carries the numbers and relationship, supporting text should interpret it, not restate it.
@@ -37,11 +52,11 @@ Use this skill to turn an existing deck into a web presentation without losing i
 
 - Create a task-local workspace before analysis. Prefer `scripts/prepare_rebuild_workspace.sh <input-file> [workspace-dir]`.
 - Keep these folders:
-  - `00-source/` original file, exported PDF, extracted text, slide screenshots
+  - `00-source/` original file, exported PDF, extracted text, slide screenshots, input profile, visual region map
   - `10-understanding/` deck brief and audience/context notes
   - `12-reference-study/` notes on any reference decks and extracted layout/system rules
-  - `20-logic/` storyline and slide-role mapping
-  - `30-assets/` asset register and extracted images
+  - `20-logic/` storyline, slide-role mapping, and confidence report
+  - `30-assets/` asset register, lineage, extracted images, and sliced regions
   - `35-strategy/` rebuild strategy and style direction
   - `40-rebuild/` page specs and generated web deck
   - `50-qa/` screenshots, comparison notes, and QA report
@@ -49,10 +64,23 @@ Use this skill to turn an existing deck into a web presentation without losing i
 
 ## Workflow
 
-### 1. Normalize the Input
+### 1. Profile and Normalize the Input
 
+- Determine the input mode before doing any design work:
+  - `polish` for an existing `.ppt`, `.pptx`, or `.key` deck whose logic mostly stands
+  - `reverse-engineer` for exported `.pdf`, screenshots, or visually complete artifacts without reliable object structure
+  - `editorial-compose` for loose copy and assets that still need deck structure
+- Write `00-source/input-profile.md`.
+- In that file, record:
+  - source file types
+  - chosen input mode
+  - likely source-of-truth order
+  - expected parsing risks
+  - normalization plan
 - Convert `.key` to a workable export before analysis. Prefer both `.pptx` and `.pdf` when available.
-- For `.pptx`, extract text, notes, and images.
+- For `.pptx`, extract text, notes, images, and object-layer clues such as grouping, coordinates, and hyperlinks when possible.
+- For `.pdf` or screenshots, treat the rendered page as the primary composition source and recover text or objects secondarily.
+- For loose materials, inventory the copy and assets first, then prepare synthetic slide candidates before styling.
 - Render full-slide reference images so layout, density, and image-text relationships can be read visually.
 - Capture speaker notes, hidden slides, appendix slides, and hyperlinks when present.
 - If local helper scripts exist, prefer these paths and fall back to equivalent tools when they do not:
@@ -79,10 +107,27 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Use [reference-deck-learning.md](./references/reference-deck-learning.md) when turning reference decks into reusable rules.
 - If the user explicitly asks for improvement beyond internal references, study a small set of current external design sources and write the transferable lessons into the strategy or skill notes instead of vaguely saying you "learned from the web."
 
+### 1B. Build a Visual Parse Before Editing
+
+- Render every slide or source page into a full-frame visual reference.
+- Write `00-source/visual-regions.json`.
+- For each page, segment and classify at least:
+  - headline band
+  - main proof zone
+  - support text zone
+  - image blocks
+  - diagrams or charts
+  - decorative or removable chrome
+  - likely navigation or meta elements
+- If the source is PDF- or screenshot-only, slice reusable visual regions into `30-assets/slices/` and record them in `30-assets/asset-lineage.json`.
+- Record likely grouping, overlap, z-order, and dominant reading path from the rendered page, not only from extracted text.
+- Note uncertain regions or relationships instead of pretending the parse is complete. Low-confidence diagrams or chart regions must be called out before redesign begins.
+- Use [visual-parsing-playbook.md](./references/visual-parsing-playbook.md) when deciding how to combine object extraction, OCR, layout analysis, and slicing.
+
 ### 2. Read the Whole Deck Before Editing
 
 - Read every slide, including cover, section dividers, appendix, and notes.
-- Inspect full-slide images, not just extracted text.
+- Inspect full-slide images and the visual region map, not just extracted text.
 - Answer these questions before doing any redesign work:
   - What is the deck about?
   - Who is speaking?
@@ -94,6 +139,7 @@ Use this skill to turn an existing deck into a web presentation without losing i
 ### 3. Model the Logic
 
 - Write `20-logic/storyline.md`.
+- Write `20-logic/confidence-report.md`.
 - Identify the deck-level arc: setup, tension, diagnosis, solution, proof, ask, close.
 - For each slide, note its role: opener, context, problem, comparison, framework, process, case study, evidence, transition, appendix, or close.
 - Map relationships:
@@ -105,17 +151,28 @@ Use this skill to turn an existing deck into a web presentation without losing i
   - hierarchy and grouping
 - Flag broken logic in the source deck, but do not fix it visually yet.
 - If a chart or diagram carries logic, describe that logic in words before redrawing it.
+- For each critical relationship, record a confidence level:
+  - `high` when confirmed by source structure and rendered page
+  - `medium` when confirmed visually but not structurally
+  - `low` when inferred from partial evidence
+- If a slide's main proof device is `low` confidence, keep the initial rebuild conservative or investigate further before stylizing it.
 
 ### 4. Clean and Classify Assets
 
 - Build `30-assets/asset-register.md`.
+- Build `30-assets/asset-lineage.json`.
 - For each asset decide `keep`, `crop`, `redraw`, `translate`, or `remove`.
+- Preserve asset lineage for every extracted visual: source page, region ID, derived file path, semantic role, chosen action, and confidence.
 - Separate:
   - photos or illustrations that should stay as images
   - product screenshots or UI captures that may need cropping or annotation
   - diagrams, flows, and architectures that should be redrawn as structured web graphics
   - charts and tables that should be recreated from data or re-encoded visually
   - decorative icons, fillers, stock UI chrome, and noise that can be removed
+- Distinguish implementation targets:
+  - simple vector-like marks, logos, and icons for SVG or CSS recreation
+  - raster images for `<img>`
+  - full-bleed ambient fields for `background-image`
 - Preserve only assets that support meaning, trust, brand, or evidence.
 - Remove visuals whose only job was to compensate for weak layout in the source deck.
 
@@ -125,6 +182,7 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Copy [deck-design-system-template.md](./references/deck-design-system-template.md) into `35-strategy/deck-design-system.md`, then replace the placeholders with deck-specific decisions. Do not start from a blank page.
 - Mirror the same rules into `35-strategy/deck-design-system.json` and validate it against `schemas/deck-design-system.schema.json`.
 - In `deck-design-system.md`, explicitly define the slide boundary model, aspect ratio policy, scaling model, permitted sizing units, and mobile degradation order for the deck.
+- Explicitly define the title-band system for the deck: height, alignment, preferred title posture, no-wrap preference, and when a two-line title is allowed.
 - Judge the visual direction from the theme, occasion, speaker, and audience. Use [style-judgment.md](./references/style-judgment.md).
 - If reference decks were provided, also ground the strategy in `12-reference-study/reference-deck-notes.md`.
 - Choose the fidelity mode:
@@ -148,16 +206,20 @@ Use this skill to turn an existing deck into a web presentation without losing i
   3. define the target layout pattern for each slide
   4. fill in refined copy and visuals
 - For each slide, decide the dominant reading path and visual anchor before placing detailed content.
-- Decide title posture explicitly: single line, balanced two-line, or intentionally stacked. Never accept accidental newspaper-style wrapping caused by an overly narrow text box.
+- Decide title posture explicitly: single-line, balanced two-line, or intentional stack. Default to a slide-level headline band that spans the main content width. Never accept accidental newspaper-style wrapping caused by an overly narrow text box.
 - Keep one page spec per slide with:
   - source slide number
+  - input mode
   - slide role
   - archetype
   - core takeaway
+  - source of truth
+  - confidence level
   - required assets
   - target layout
   - proportional spatial map
   - dominant visual anchor
+  - title posture
   - primary proof device
   - bilingual strategy
   - mobile degradation plan
@@ -201,6 +263,10 @@ Use this skill to turn an existing deck into a web presentation without losing i
   - hide overflow at the slide-container level rather than letting the page grow vertically
 - Translate original PPT coordinates into proportional layout zones. Use Grid, Flexbox, `fr`, `%`, and named regions before considering absolute positioning.
 - Use absolute positioning only for small, local overlays such as badges, arrows, or diagram labels when the parent zone is already stable.
+- When elements overlap, assign explicit `z-index` values instead of relying on DOM order alone.
+- If the source implies staged reveals, carry that build order into markup with simple step metadata such as `data-step`.
+- Preserve speaker notes or hidden source metadata in a non-visual aside when available.
+- Differentiate asset implementation on purpose: SVG or CSS for scalable vector-like marks, `<img>` for raster visuals, and background layers for ambient full-slide fields.
 - Prefer container-query units such as `cqi`, `cqw`, or `cqh` for slide-synchronized typography and spacing. If container queries are unavailable, use a documented slide-relative fallback such as carefully chosen `vmin` tokens.
 - Provide:
   - a table of contents or slide index
@@ -222,7 +288,9 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Check that each slide still fits as one bounded frame without native browser scrollbars appearing.
 - Check that aspect ratio, scale, and spacing feel synchronized instead of behaving like unrelated webpage modules.
 - Check for awkward heading wraps in both languages, especially on covers and opening analytical slides.
+- Check that title bands read as a deck-wide system. Most body slides should not wrap unless the copy genuinely requires it.
 - Measure title containers in DevTools or an equivalent inspector. The rendered title region should not drop below `55%` of the slide width unless the archetype explicitly justifies it.
+- Compare low-confidence slides against the source again before accepting any stylized redraw.
 - Check for repeated information across headline, body, stat chips, and diagram labels. Remove duplicated layers instead of polishing them.
 - Check for duplicate navigation or duplicated overview content in the opening sequence.
 - Check for dead zones: large blank regions that do not improve focus, pacing, or composition.
@@ -249,6 +317,7 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Read [typography-rules.md](./references/typography-rules.md) when title fit, body measure, or bilingual robustness is at risk.
 - Read [layout-patterns.md](./references/layout-patterns.md) and [page-archetypes.md](./references/page-archetypes.md) before writing page specs.
 - Read [bilingual-toggle-pattern.md](./references/bilingual-toggle-pattern.md) before implementing the language switcher.
+- Read [visual-parsing-playbook.md](./references/visual-parsing-playbook.md) when the source is a PDF, screenshot set, or otherwise depends on visual parsing and slicing.
 
 ## Trigger Examples
 

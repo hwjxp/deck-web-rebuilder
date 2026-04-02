@@ -18,6 +18,10 @@ def run_check(workspace: Path) -> list[str]:
 
     issues.extend(maybe_validate_with_jsonschema(data, PAGE_SCHEMA))
 
+    input_mode = data.get("input_mode")
+    if input_mode not in {"polish", "reverse-engineer", "editorial-compose"}:
+        issues.append("page-specs.json should declare a valid top-level input_mode")
+
     slides = data.get("slides", [])
     if len(slides) < 3:
         issues.append("page-specs.json should describe at least 3 slides before implementation starts")
@@ -41,9 +45,28 @@ def run_check(workspace: Path) -> list[str]:
         title = slide.get("title", {})
         if not title.get("fallback_strategy"):
             issues.append(f"{slide_id}: missing title fallback strategy")
+        posture = title.get("posture")
+        prefer_no_wrap = title.get("prefer_no_wrap")
+        max_lines = title.get("max_lines")
+        min_container_ratio = title.get("min_container_ratio", 0)
+
+        if posture == "single-line" and max_lines != 1:
+            issues.append(f"{slide_id}: single-line title posture should use `max_lines: 1`")
+        if posture == "single-line" and not prefer_no_wrap:
+            issues.append(f"{slide_id}: single-line title posture should set `prefer_no_wrap: true`")
+        if posture == "balanced-two-line" and prefer_no_wrap:
+            issues.append(f"{slide_id}: balanced-two-line titles should not force `prefer_no_wrap: true`")
+        if prefer_no_wrap and min_container_ratio < 0.6:
+            issues.append(f"{slide_id}: no-wrap titles should keep at least 60% title container width")
 
         if not slide.get("forbidden_patterns"):
             issues.append(f"{slide_id}: forbidden_patterns should be declared explicitly")
+
+        source_of_truth = set(slide.get("source_of_truth", []))
+        if input_mode != "editorial-compose" and "visual-render" not in source_of_truth:
+            issues.append(f"{slide_id}: non-editorial slides should include `visual-render` in source_of_truth")
+        if slide.get("confidence_level") == "low" and slide.get("primary_proof_device") not in {"none", "hero-image"}:
+            issues.append(f"{slide_id}: low-confidence proof slides should be investigated before free redraw")
 
     return issues
 

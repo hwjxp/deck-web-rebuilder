@@ -2,6 +2,17 @@
 
 Preserve meaning before preserving cosmetics.
 
+## Source Of Truth
+
+Use this order when facts conflict:
+
+1. source object layer
+2. rendered page
+3. OCR text
+4. inference
+
+Never let a low-confidence inference overwrite a clear visual relationship from the rendered source.
+
 ## What Must Stay Faithful
 
 - slide order unless there is a justified restructure
@@ -68,3 +79,4 @@ When reviewing a rebuilt slide, ask:
 - Is the content field visibly denser than the empty field, or has whitespace turned into an unsupported dead zone?
 - Looking only at size and weight, can you tell title, subtitle, and body apart within two seconds?
 - When switching languages, do the corresponding blocks stay structurally aligned instead of causing a major jump in page balance?
+- If part of the page was reconstructed from incomplete evidence, is that redraw still conservative enough to avoid inventing a new claim?

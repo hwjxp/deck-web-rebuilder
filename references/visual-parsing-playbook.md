@@ -1,0 +1,148 @@
+# Visual Parsing Playbook
+
+Use this playbook whenever the source is not perfectly recoverable from object-layer data, or when rendered-slide understanding is needed to preserve composition and logic.
+
+## Core Principle
+
+Visual parsing is not optional. Even for `.pptx`, the rendered page is the ground truth for:
+
+- composition
+- grouping
+- emphasis
+- overlap
+- visual rhythm
+- text-image pairing
+
+Object extraction helps, but the rendered page decides what the audience actually saw.
+
+## Input Modes
+
+Choose one mode early and write it into `00-source/input-profile.md`.
+
+- `polish`
+  - use when a structured deck already exists
+  - primary goal: preserve story and logic while upgrading design and rebuilding for the web
+- `reverse-engineer`
+  - use when the source is a `.pdf`, screenshot set, or visually complete export
+  - primary goal: recover structure, assets, and logic from rendered pages
+- `editorial-compose`
+  - use when only rough copy and assets exist
+  - primary goal: organize the material into a coherent deck before styling
+
+## Source-Of-Truth Order
+
+Use this priority unless there is a documented reason to override it:
+
+1. source object layer
+2. rendered slide or page
+3. OCR text
+4. inference
+
+Never let low-confidence OCR override a clearly visible diagram, grouping, or title treatment.
+
+## Visual Region Types
+
+At minimum, classify regions into:
+
+- `headline-band`
+- `proof-zone`
+- `support-copy`
+- `photo`
+- `screenshot`
+- `diagram`
+- `chart`
+- `table`
+- `logo`
+- `chrome`
+- `decoration`
+
+Each region record should keep:
+
+- region id
+- source page
+- approximate bounding box
+- semantic type
+- likely group id
+- likely z-order hint
+- confidence
+- slice path if exported
+
+## Slicing Strategy
+
+When the source is PDF- or screenshot-only:
+
+- slice reusable product visuals, screenshots, logos, and isolated diagram fragments
+- do not slice decorative noise unless it clearly belongs to the deck shell
+- prefer redrawing diagrams and charts once their logic is understood
+- keep a traceable lineage record from source page -> region -> exported slice -> chosen action
+
+## Confidence Rubric
+
+- `high`
+  - confirmed by object layer and rendered page
+  - safe to redraw or restyle
+- `medium`
+  - confirmed visually but not structurally
+  - safe to preserve with care, redraw only if the logic is understood
+- `low`
+  - inferred from partial evidence
+  - keep conservative, inspect again, or escalate before free redesign
+
+## Practical Tool Stack To Learn From
+
+Use these as patterns and references, not as a promise that one tool solves everything.
+
+- [PyMuPDF](https://pymupdf.io/)
+  - strong for text, bounding boxes, links, and image extraction from PDF
+- [pdfplumber](https://github.com/jsvine/pdfplumber)
+  - strong for low-level PDF objects, tables, lines, and debugging page geometry
+- [Adobe PDF Extract API](https://developer.adobe.com/document-services/docs/overview/legacy-documentation/pdf-extract-api/howtos/extract-api/)
+  - useful for structured extraction plus figure and table renditions
+- [Google Document AI Layout Parser](https://docs.cloud.google.com/document-ai/docs/layout-parse-chunk)
+  - useful for layout hierarchy, tables, images, and chunked document understanding
+- [Azure Document Intelligence Layout](https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/prebuilt/layout?view=doc-intel-4.0.0)
+  - useful for page layout across PDFs and images
+- [PaddleOCR PP-StructureV3](https://www.paddleocr.ai/main/en/version3.x/algorithm/PP-StructureV3/PP-StructureV3.html)
+  - useful for OCR plus layout detection, tables, formulas, and chart-oriented structure recovery
+- [LayoutParser](https://layout-parser.github.io/)
+  - useful as a modular document-layout analysis framework
+- [DocLayNet](https://research.ibm.com/publications/doclaynet-a-large-human-annotated-dataset-for-document-layout-segmentation)
+  - useful as a reference dataset for document layout segmentation
+- [SAM 2](https://github.com/facebookresearch/sam2)
+  - useful for region segmentation and candidate slicing
+- [OmniParser](https://github.com/microsoft/OmniParser)
+  - useful inspiration for turning screenshots into structured regions, especially UI-like pages
+
+## Recommended Combined Pipeline
+
+### For `.pptx`
+
+1. extract object-layer text, notes, images, and coordinates
+2. render every slide visually
+3. compare object regions with the rendered slide
+4. keep a region map and confidence report
+5. then model logic and rebuild
+
+### For `.pdf`
+
+1. extract text and images with a PDF tool
+2. render each page
+3. classify layout and region types visually
+4. slice reusable assets
+5. redraw diagrams only after their logic is described in words
+
+### For screenshots
+
+1. treat the screenshot as the composition truth
+2. detect regions and OCR text
+3. slice reusable assets
+4. infer layout and hierarchy conservatively
+5. mark low-confidence areas instead of inventing structure
+
+## Red Flags
+
+- title area inferred only from OCR without looking at the full page
+- diagrams treated as ordinary images without logic notes
+- low-confidence charts redrawn too early
+- multiple slices exported with no lineage back to source page
+- decorative fragments preserved while true proof objects are lost

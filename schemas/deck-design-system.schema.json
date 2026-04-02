@@ -9,6 +9,7 @@
     "theme",
     "canvas",
     "typography",
+    "title_band",
     "color_slots",
     "spacing_scale",
     "grid",
@@ -305,6 +306,46 @@
         }
       }
     },
+    "title_band": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "default_posture",
+        "prefer_single_line",
+        "min_width_ratio",
+        "min_height",
+        "alignment"
+      ],
+      "properties": {
+        "default_posture": {
+          "type": "string",
+          "enum": [
+            "single-line",
+            "balanced-two-line",
+            "intentional-stack"
+          ]
+        },
+        "prefer_single_line": {
+          "type": "boolean"
+        },
+        "min_width_ratio": {
+          "type": "number",
+          "minimum": 0.55,
+          "maximum": 1
+        },
+        "min_height": {
+          "type": "string"
+        },
+        "alignment": {
+          "type": "string",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ]
+        }
+      }
+    },
     "color_slots": {
       "type": "object",
       "additionalProperties": false,
@@ -352,14 +393,32 @@
       "properties": {
         "columns": {
           "type": "integer",
-          "minimum": 8,
-          "maximum": 16
+          "enum": [
+            8
+          ]
         },
         "gutter": {
           "type": "string"
         },
         "outer_margin": {
-          "type": "string"
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mobile",
+            "tablet",
+            "desktop"
+          ],
+          "properties": {
+            "mobile": {
+              "type": "string"
+            },
+            "tablet": {
+              "type": "string"
+            },
+            "desktop": {
+              "type": "string"
+            }
+          }
         },
         "content_max_width": {
           "type": "string"

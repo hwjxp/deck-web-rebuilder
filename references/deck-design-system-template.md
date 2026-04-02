@@ -113,16 +113,25 @@ Use these rules verbatim unless the deck has a strong reason to override them.
 
 Hard rules:
 
-- ordinary slides: titles max 2 lines
+- ordinary slides: titles max 2 lines and should prefer 1 line when possible
 - covers and section dividers: titles max 3 lines
+- treat the title as a slide-level headline band rather than a local card label
+- ordinary slides should usually keep the title region above `60%` of the slide width
 - never set the title region below `55%` of the slide width just to force dramatic wrapping
 - fallback order: `rewrite -> restack -> widen-title-region -> shrink-last`
 
 ## 7. Grid and Layout
 
-- column count:
+- column count: `8`
 - gutter:
-- outer margin:
+- outer margins:
+  - mobile: `16px`
+  - tablet: `24px`
+  - desktop: `32px`
+- content max width: `1280px`
+- title band default posture:
+- title band min width ratio:
+- title band min height:
 - dominant title region width:
 - common content patterns:
 

@@ -45,9 +45,16 @@
     },
     "title_wrapping": {
       "max_title_lines": 2,
-      "min_title_container_ratio": 0.58,
+      "min_title_container_ratio": 0.6,
       "fallback_order": ["rewrite", "restack", "widen-title-region", "shrink-last"]
     }
+  },
+  "title_band": {
+    "default_posture": "single-line",
+    "prefer_single_line": true,
+    "min_width_ratio": 0.6,
+    "min_height": "18%",
+    "alignment": "left"
   },
   "color_slots": {
     "background": "#f4f1ea",
@@ -67,10 +74,14 @@
     "space_40": "4cqi"
   },
   "grid": {
-    "columns": 12,
+    "columns": 8,
     "gutter": "1.6cqi",
-    "outer_margin": "2.6cqi",
-    "content_max_width": "92cqi"
+    "outer_margin": {
+      "mobile": "16px",
+      "tablet": "24px",
+      "desktop": "32px"
+    },
+    "content_max_width": "1280px"
   },
   "page_chrome": {
     "navigation": "top-right previous and next controls",

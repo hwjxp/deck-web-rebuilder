@@ -1,6 +1,7 @@
 {
   "deck_id": "aurora-commerce-os",
   "source_file": "example",
+  "input_mode": "polish",
   "default_bilingual_mode": "toggle",
   "slides": [
     {
@@ -15,12 +16,16 @@
       },
       "density": "low",
       "visual_anchor": "hero-image",
+      "confidence_level": "high",
+      "source_of_truth": ["source-object", "visual-render"],
       "title": {
         "text": {
           "en": "Aurora Commerce OS For Premium Retail Launches",
           "zh": "面向高端零售发布的 Aurora Commerce OS"
         },
-        "max_lines": 2,
+        "posture": "single-line",
+        "prefer_no_wrap": true,
+        "max_lines": 1,
         "preferred_width_ch": 30,
         "min_container_ratio": 0.66,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -74,12 +79,16 @@
       },
       "density": "medium",
       "visual_anchor": "diagram",
+      "confidence_level": "high",
+      "source_of_truth": ["source-object", "visual-render"],
       "title": {
         "text": {
           "en": "One Loop Connects Planning, Launch, And Retention",
           "zh": "一个闭环贯通策划、发布与留存"
         },
-        "max_lines": 2,
+        "posture": "single-line",
+        "prefer_no_wrap": true,
+        "max_lines": 1,
         "preferred_width_ch": 32,
         "min_container_ratio": 0.62,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -133,12 +142,16 @@
       },
       "density": "medium",
       "visual_anchor": "timeline",
+      "confidence_level": "high",
+      "source_of_truth": ["source-object", "visual-render"],
       "title": {
         "text": {
           "en": "A Twelve-Week Rollout Moves Through Four Distinct Phases",
           "zh": "十二周 rollout 分四个明确阶段推进"
         },
-        "max_lines": 2,
+        "posture": "single-line",
+        "prefer_no_wrap": true,
+        "max_lines": 1,
         "preferred_width_ch": 34,
         "min_container_ratio": 0.6,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -192,12 +205,16 @@
       },
       "density": "low",
       "visual_anchor": "showcase-sample",
+      "confidence_level": "high",
+      "source_of_truth": ["source-object", "visual-render"],
       "title": {
         "text": {
           "en": "A Premium Experience Does Not Need To Sacrifice Control",
           "zh": "高级体验不必牺牲运营控制力"
         },
-        "max_lines": 2,
+        "posture": "single-line",
+        "prefer_no_wrap": true,
+        "max_lines": 1,
         "preferred_width_ch": 32,
         "min_container_ratio": 0.6,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -251,12 +268,16 @@
       },
       "density": "medium",
       "visual_anchor": "decision-panel",
+      "confidence_level": "high",
+      "source_of_truth": ["source-object", "visual-render"],
       "title": {
         "text": {
           "en": "Approve A Twelve-Week Pilot With One Executive Sponsor",
           "zh": "批准一项为期十二周、由一位高层 sponsor 牵头的 pilot"
         },
-        "max_lines": 2,
+        "posture": "single-line",
+        "prefer_no_wrap": true,
+        "max_lines": 1,
         "preferred_width_ch": 34,
         "min_container_ratio": 0.64,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]

@@ -2,6 +2,38 @@
 
 Use these artifacts as gates between stages. Do not skip forward when a required artifact is missing or still vague.
 
+## `00-source/input-profile.md`
+
+Profile the source before analysis starts.
+
+Include:
+
+- source file types
+- selected input mode: `polish`, `reverse-engineer`, or `editorial-compose`
+- source-of-truth order
+- normalization plan
+- expected parsing risks
+- note on whether visual parsing is primary or secondary for this project
+
+## `00-source/visual-regions.json`
+
+Store the visual parse for the source pages.
+
+Recommended structure:
+
+- top-level deck id or source id
+- one entry per page or slide
+- region list per page with:
+  - region id
+  - semantic type
+  - approximate bounding box
+  - likely group id
+  - likely z-order
+  - confidence
+  - optional slice path
+
+This file should show that the rendered pages were actually analyzed, not only OCR'd.
+
 ## `10-understanding/deck-brief.md`
 
 Capture the deck-level understanding in concise prose.
@@ -54,6 +86,19 @@ Recommended slide table columns:
 - visual role
 - relationship notes
 
+## `20-logic/confidence-report.md`
+
+Track what is known and what is inferred.
+
+Include:
+
+- high-confidence relationships
+- medium-confidence relationships
+- low-confidence relationships
+- which slides are safe to redraw freely
+- which slides should be preserved conservatively
+- any follow-up checks needed before layout or redraw
+
 ## `30-assets/asset-register.md`
 
 Treat the visual inventory as a cleaning task.
@@ -68,6 +113,8 @@ Recommended columns:
 - reason
 - translation needed
 - redraw notes
+- source region id
+- confidence
 
 Use these actions:
 
@@ -76,6 +123,22 @@ Use these actions:
 - `redraw`
 - `translate`
 - `remove`
+
+## `30-assets/asset-lineage.json`
+
+Keep every extracted or sliced asset traceable.
+
+Recommended fields:
+
+- asset id
+- source slide
+- source region ids
+- original file path
+- derived slice path
+- semantic role
+- chosen action
+- redraw flag
+- confidence
 
 ## `35-strategy/rebuild-strategy.md`
 
@@ -102,6 +165,7 @@ Include:
 - visual theme and atmosphere
 - color palette and semantic roles
 - typography hierarchy and title behavior
+- title-band defaults and no-wrap policy
 - slide-shell and navigation rules
 - slide boundary model and aspect ratio policy
 - scaling model and preferred sizing units
@@ -123,9 +187,13 @@ Write one section per destination slide.
 Include for each slide:
 
 - source slide number
+- input mode
 - destination slide id
 - slide role
 - core takeaway
+- source of truth
+- confidence level
+- title posture
 - required copy blocks
 - required assets
 - target layout pattern
@@ -182,11 +250,15 @@ Keep a short, reusable checklist for:
 
 Before generating final HTML, confirm these files exist and are meaningful:
 
+- `00-source/input-profile.md`
+- `00-source/visual-regions.json`
 - `10-understanding/deck-brief.md`
 - `12-reference-study/reference-deck-notes.md`
 - `12-reference-study/reference-deck-notes.yaml`
 - `20-logic/storyline.md`
+- `20-logic/confidence-report.md`
 - `30-assets/asset-register.md`
+- `30-assets/asset-lineage.json`
 - `35-strategy/rebuild-strategy.md`
 - `35-strategy/deck-design-system.md`
 - `35-strategy/deck-design-system.json`

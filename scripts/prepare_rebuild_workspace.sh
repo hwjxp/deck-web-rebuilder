@@ -27,12 +27,51 @@ mkdir -p "$WORKSPACE_DIR"/10-understanding
 mkdir -p "$WORKSPACE_DIR"/12-reference-study
 mkdir -p "$WORKSPACE_DIR"/20-logic
 mkdir -p "$WORKSPACE_DIR"/30-assets
+mkdir -p "$WORKSPACE_DIR"/30-assets/slices
 mkdir -p "$WORKSPACE_DIR"/35-strategy
 mkdir -p "$WORKSPACE_DIR"/40-rebuild
 mkdir -p "$WORKSPACE_DIR"/40-rebuild/deck
 mkdir -p "$WORKSPACE_DIR"/50-qa
 
 cp -f "$INPUT_ABS" "$WORKSPACE_DIR/00-source/$INPUT_BASENAME"
+
+cat > "$WORKSPACE_DIR/00-source/input-profile.md" <<'EOF'
+# Input Profile
+
+## Source Files
+
+## Input Mode
+
+## Source-Of-Truth Order
+
+## Normalization Plan
+
+## Parsing Risks
+
+## Visual Parsing Role
+EOF
+
+cat > "$WORKSPACE_DIR/00-source/visual-regions.json" <<'EOF'
+{
+  "source_id": "replace-with-source-id",
+  "slides": [
+    {
+      "slide_id": "slide-01",
+      "regions": [
+        {
+          "region_id": "slide-01-headline",
+          "type": "headline-band",
+          "bbox": [0.08, 0.08, 0.82, 0.18],
+          "group_id": "headline-group",
+          "z_order_hint": 10,
+          "confidence": "replace-me",
+          "slice_path": ""
+        }
+      ]
+    }
+  ]
+}
+EOF
 
 cat > "$WORKSPACE_DIR/10-understanding/deck-brief.md" <<'EOF'
 # Deck Brief
@@ -102,11 +141,41 @@ cat > "$WORKSPACE_DIR/20-logic/storyline.md" <<'EOF'
 ## Logic Breaks Or Redundancy
 EOF
 
+cat > "$WORKSPACE_DIR/20-logic/confidence-report.md" <<'EOF'
+# Confidence Report
+
+## High Confidence
+
+## Medium Confidence
+
+## Low Confidence
+
+## Follow-Up Actions
+EOF
+
 cat > "$WORKSPACE_DIR/30-assets/asset-register.md" <<'EOF'
 # Asset Register
 
 | Asset ID | Source Slide | Asset Type | Semantic Role | Action | Reason | Translation Needed | Redraw Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+EOF
+
+cat > "$WORKSPACE_DIR/30-assets/asset-lineage.json" <<'EOF'
+{
+  "assets": [
+    {
+      "asset_id": "replace-me",
+      "source_slide": 1,
+      "source_region_ids": ["slide-01-headline"],
+      "original_file_path": "00-source/replace-me",
+      "derived_slice_path": "30-assets/slices/replace-me.png",
+      "semantic_role": "replace-me",
+      "chosen_action": "keep",
+      "redraw": false,
+      "confidence": "replace-me"
+    }
+  ]
+}
 EOF
 
 cat > "$WORKSPACE_DIR/35-strategy/rebuild-strategy.md" <<'EOF'
@@ -172,12 +241,18 @@ Copy the baseline structure from `references/deck-design-system-template.md`, th
 ## 4. Typography Rules
 
 - title wrapping:
+- title band:
 - body measure:
 - bilingual fallback order:
 
 ## 5. Grid And Page Chrome
 
 - grid:
+- outer margins:
+  - mobile: `16px`
+  - tablet: `24px`
+  - desktop: `32px`
+- content max width: `1280px`
 - navigation:
 - language toggle:
 - deep links:
@@ -248,9 +323,16 @@ cat > "$WORKSPACE_DIR/35-strategy/deck-design-system.json" <<'EOF'
     },
     "title_wrapping": {
       "max_title_lines": 2,
-      "min_title_container_ratio": 0.55,
+      "min_title_container_ratio": 0.6,
       "fallback_order": ["rewrite", "restack", "widen-title-region", "shrink-last"]
     }
+  },
+  "title_band": {
+    "default_posture": "single-line",
+    "prefer_single_line": true,
+    "min_width_ratio": 0.6,
+    "min_height": "18%",
+    "alignment": "left"
   },
   "color_slots": {
     "background": "replace-me",
@@ -270,10 +352,14 @@ cat > "$WORKSPACE_DIR/35-strategy/deck-design-system.json" <<'EOF'
     "space_40": "4cqi"
   },
   "grid": {
-    "columns": 12,
+    "columns": 8,
     "gutter": "1.6cqi",
-    "outer_margin": "2.4cqi",
-    "content_max_width": "92cqi"
+    "outer_margin": {
+      "mobile": "16px",
+      "tablet": "24px",
+      "desktop": "32px"
+    },
+    "content_max_width": "1280px"
   },
   "page_chrome": {
     "navigation": "top-right controls with previous and next buttons",
@@ -312,13 +398,22 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.md" <<'EOF'
 
 Use `references/layout-patterns.md`, `references/page-archetypes.md`, and `references/typography-rules.md`. Do not invent new layout vocabulary.
 
+## Deck-Level Settings
+
+- Input Mode:
+- Default Source Of Truth:
+
 ## slide-01
 
 - Source Slide:
+- Input Mode:
 - Destination Slide ID: `slide-01`
 - Slide Role:
 - Archetype:
 - Core Takeaway:
+- Source Of Truth:
+- Confidence Level:
+- Title Posture:
 - Required Copy Blocks:
 - Required Assets:
 - Target Layout Pattern:
@@ -334,10 +429,14 @@ Use `references/layout-patterns.md`, `references/page-archetypes.md`, and `refer
 ## slide-02
 
 - Source Slide:
+- Input Mode:
 - Destination Slide ID: `slide-02`
 - Slide Role:
 - Archetype:
 - Core Takeaway:
+- Source Of Truth:
+- Confidence Level:
+- Title Posture:
 - Required Copy Blocks:
 - Required Assets:
 - Target Layout Pattern:
@@ -353,10 +452,14 @@ Use `references/layout-patterns.md`, `references/page-archetypes.md`, and `refer
 ## slide-03
 
 - Source Slide:
+- Input Mode:
 - Destination Slide ID: `slide-03`
 - Slide Role:
 - Archetype:
 - Core Takeaway:
+- Source Of Truth:
+- Confidence Level:
+- Title Posture:
 - Required Copy Blocks:
 - Required Assets:
 - Target Layout Pattern:
@@ -374,6 +477,7 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.json" <<'EOF'
 {
   "deck_id": "replace-with-deck-id",
   "source_file": "00-source/replace-with-source-file",
+  "input_mode": "polish",
   "default_bilingual_mode": "toggle",
   "slides": [
     {
@@ -388,12 +492,16 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.json" <<'EOF'
       },
       "density": "low",
       "visual_anchor": "hero-image",
+      "confidence_level": "high",
+      "source_of_truth": ["source-object", "visual-render"],
       "title": {
         "text": {
           "en": "Replace With The Final Cover Title",
           "zh": "请替换为最终封面标题"
         },
-        "max_lines": 2,
+        "posture": "single-line",
+        "prefer_no_wrap": true,
+        "max_lines": 1,
         "preferred_width_ch": 28,
         "min_container_ratio": 0.62,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -437,14 +545,18 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.json" <<'EOF'
       },
       "density": "medium",
       "visual_anchor": "diagram",
+      "confidence_level": "medium",
+      "source_of_truth": ["visual-render", "ocr", "inferred"],
       "title": {
         "text": {
           "en": "Replace With A Wide Two-Line Max Framing Title",
           "zh": "请替换为两行以内的宽标题"
         },
+        "posture": "balanced-two-line",
+        "prefer_no_wrap": false,
         "max_lines": 2,
         "preferred_width_ch": 30,
-        "min_container_ratio": 0.58,
+        "min_container_ratio": 0.62,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
       },
       "body_blocks": [
@@ -505,12 +617,16 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.json" <<'EOF'
       },
       "density": "medium",
       "visual_anchor": "proof-strip",
+      "confidence_level": "high",
+      "source_of_truth": ["source-object", "visual-render"],
       "title": {
         "text": {
           "en": "Replace With The Primary Proof Headline",
           "zh": "请替换为证明页主标题"
         },
-        "max_lines": 2,
+        "posture": "single-line",
+        "prefer_no_wrap": true,
+        "max_lines": 1,
         "preferred_width_ch": 28,
         "min_container_ratio": 0.6,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -607,6 +723,7 @@ Use this before calling the pilot or full deck finished.
 
 ## Hierarchy
 
+- Are there any awkward or unnecessary title line breaks?
 - Can I tell title, subtitle, and body apart within two seconds?
 - Is there exactly one dominant visual anchor on the slide?
 - Does the title container stay wide enough in both English and Chinese?

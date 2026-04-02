@@ -6,6 +6,7 @@
   "additionalProperties": false,
   "required": [
     "deck_id",
+    "input_mode",
     "default_bilingual_mode",
     "slides"
   ],
@@ -16,6 +17,14 @@
     },
     "source_file": {
       "type": "string"
+    },
+    "input_mode": {
+      "type": "string",
+      "enum": [
+        "polish",
+        "reverse-engineer",
+        "editorial-compose"
+      ]
     },
     "default_bilingual_mode": {
       "type": "string",
@@ -149,6 +158,8 @@
         "takeaway",
         "density",
         "visual_anchor",
+        "confidence_level",
+        "source_of_truth",
         "title",
         "body_blocks",
         "assets",
@@ -239,11 +250,34 @@
             "table"
           ]
         },
+        "confidence_level": {
+          "type": "string",
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "source_of_truth": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "enum": [
+              "source-object",
+              "visual-render",
+              "ocr",
+              "inferred"
+            ]
+          }
+        },
         "title": {
           "type": "object",
           "additionalProperties": false,
           "required": [
             "text",
+            "posture",
+            "prefer_no_wrap",
             "max_lines",
             "preferred_width_ch",
             "min_container_ratio",
@@ -252,6 +286,17 @@
           "properties": {
             "text": {
               "$ref": "#/$defs/localizedText"
+            },
+            "posture": {
+              "type": "string",
+              "enum": [
+                "single-line",
+                "balanced-two-line",
+                "intentional-stack"
+              ]
+            },
+            "prefer_no_wrap": {
+              "type": "boolean"
             },
             "max_lines": {
               "type": "integer",
