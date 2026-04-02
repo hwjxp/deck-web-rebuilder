@@ -1,0 +1,33 @@
+archetype: cover
+layout_pattern: HERO-FULL
+use_when:
+  - cover slide
+  - chapter opener
+dominant_reading_path:
+  - headline
+  - supporting meta
+  - hero atmosphere
+visual_anchor: hero-image
+title_region:
+  min_container_ratio: 0.6
+  max_lines: 3
+body_structure:
+  - eyebrow
+  - title
+  - subtitle
+  - meta rail
+bilingual:
+  mode: toggle
+  title_fallback:
+    - rewrite
+    - restack
+    - widen-title-region
+mobile:
+  order:
+    - scale-slide
+    - trim-decoration
+    - tighten-spacing
+forbidden_patterns:
+  - duplicate-agenda
+  - floating-card-row
+  - dead-zone

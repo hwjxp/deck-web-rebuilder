@@ -2,6 +2,8 @@
 
 Use this note when the user asks for broader craft improvement beyond the source deck and internal references.
 
+After choosing a visual direction, pick one or two sources from this list and write the concrete transferable rules into `deck-design-system.md` or `deck-design-system.json`. Record rules, not mood-board impressions.
+
 ## Transferable Lessons
 
 - Typography should define hierarchy, focus attention, and preserve glanceable reading order. Use a stable scale and vertical rhythm instead of relying on accidental line breaks to create drama.
@@ -14,10 +16,10 @@ Use this note when the user asks for broader craft improvement beyond the source
 
 ## Source Links
 
-- Google for Developers, Typography: [developers.google.com/cars/design/automotive-os/design-system/typography](https://developers.google.com/cars/design/automotive-os/design-system/typography)
-- Google Design Library, Robinhood and Material: [design.google/library/robinhood-investing-material](https://design.google/library/robinhood-investing-material)
-- Nielsen Norman Group, Images on Mobile: [nngroup.com/videos/mobile-images](https://www.nngroup.com/videos/mobile-images/?lm=supporting-multiple-location-users&pt=article)
-- Nielsen Norman Group, Site Map Usability report listing: [media.nngroup.com/media/reports/free/Site_Map_Usability_2nd_Edition.pdf](https://media.nngroup.com/media/reports/free/Site_Map_Usability_2nd_Edition.pdf)
+- Pitch design resources and deck examples: [pitch.com](https://pitch.com/)
+- Linear design and product writing examples: [linear.app/blog](https://linear.app/blog)
+- Apple Keynote user guide and theme guidance: [support.apple.com/guide/keynote/welcome/mac](https://support.apple.com/guide/keynote/welcome/mac)
+- Nielsen Norman Group, visual design and hierarchy guidance: [nngroup.com/topic/visual-design](https://www.nngroup.com/topic/visual-design/)
 - VoltAgent `awesome-design-md`: [github.com/VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md)
 
 ## How To Apply Them To Deck Rebuilds

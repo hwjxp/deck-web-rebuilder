@@ -70,3 +70,30 @@ Write `12-reference-study/reference-deck-notes.md` with:
 - text-image rules
 - anti-patterns to avoid
 - which lessons should transfer to the target deck
+
+Also write a machine-readable companion file, `12-reference-study/reference-deck-notes.yaml`, using this schema:
+
+```yaml
+reference_deck_notes:
+  shell:
+    cover_style: "dark bleed / light center / split"
+    section_divider: "full-width accent / minimal line / none"
+    body_chrome: "top bar only / bottom bar / none"
+    accent_color_count: 1
+  page_archetypes:
+    - name: executive_summary
+      layout_pattern: HEADLINE-PROOF
+      text_image_ratio: "70:30"
+    - name: comparison_matrix
+      layout_pattern: GRID-2COL
+      text_image_ratio: "55:45"
+  text_image_contract:
+    anchor_count: 1
+    caption_distance: "tight"
+    note_panel_behavior: "separate explanation from proof"
+  anti_patterns:
+    - "Dense bilingual stacked titles causing wrapping"
+    - "Duplicate agenda page after cover"
+```
+
+When strategy documents cite a reference rule, prefer quoting the YAML key path over vague prose.

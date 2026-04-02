@@ -1,0 +1,25 @@
+archetype: section-divider
+layout_pattern: HERO-FULL
+use_when:
+  - chapter divider
+  - thematic reset
+dominant_reading_path:
+  - section label
+  - title
+visual_anchor: hero-image
+title_region:
+  min_container_ratio: 0.6
+  max_lines: 3
+body_structure:
+  - eyebrow
+  - title
+  - short framing line
+bilingual:
+  mode: toggle
+mobile:
+  order:
+    - scale-slide
+    - trim-decoration
+forbidden_patterns:
+  - generic-cardification
+  - long-scroll-mobile

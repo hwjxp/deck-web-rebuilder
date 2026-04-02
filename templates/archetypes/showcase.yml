@@ -1,0 +1,30 @@
+archetype: showcase
+layout_pattern: SPLIT-60-40
+use_when:
+  - product sample
+  - art sample
+  - style sample
+dominant_reading_path:
+  - hero sample
+  - headline
+  - short supporting note
+visual_anchor: showcase-sample
+title_region:
+  min_container_ratio: 0.58
+  max_lines: 2
+body_structure:
+  - eyebrow
+  - title
+  - hero sample
+  - sample note
+  - secondary thumbnails
+bilingual:
+  mode: toggle
+mobile:
+  order:
+    - scale-slide
+    - trim-decoration
+    - tighten-spacing
+forbidden_patterns:
+  - floating-card-row
+  - dead-zone

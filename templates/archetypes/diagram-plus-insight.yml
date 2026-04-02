@@ -1,0 +1,33 @@
+archetype: diagram-plus-insight
+layout_pattern: SPLIT-60-40
+use_when:
+  - framework page
+  - overlap diagram
+  - proof with one central visual object
+dominant_reading_path:
+  - headline
+  - diagram
+  - side insight
+visual_anchor: diagram
+title_region:
+  min_container_ratio: 0.58
+  max_lines: 2
+body_structure:
+  - eyebrow
+  - title
+  - lede
+  - diagram
+  - interpretation panel
+proof_device: diagram
+bilingual:
+  mode: toggle
+mobile:
+  order:
+    - scale-slide
+    - trim-decoration
+    - tighten-spacing
+    - reflow-layout
+forbidden_patterns:
+  - double-proof-layer
+  - generic-cardification
+  - narrow-title-column

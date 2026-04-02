@@ -1,0 +1,30 @@
+archetype: comparison-matrix
+layout_pattern: GRID-2COL
+use_when:
+  - keep vs reject
+  - before vs after
+  - structured comparison
+dominant_reading_path:
+  - headline
+  - comparison object
+  - takeaway
+visual_anchor: comparison-matrix
+title_region:
+  min_container_ratio: 0.58
+  max_lines: 2
+body_structure:
+  - eyebrow
+  - title
+  - comparison matrix
+  - short implication note
+proof_device: comparison-matrix
+bilingual:
+  mode: toggle
+mobile:
+  order:
+    - scale-slide
+    - trim-decoration
+    - reflow-layout
+forbidden_patterns:
+  - double-proof-layer
+  - dead-zone

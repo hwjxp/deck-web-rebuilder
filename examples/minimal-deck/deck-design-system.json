@@ -1,0 +1,105 @@
+{
+  "deck_id": "aurora-commerce-os",
+  "theme": {
+    "tonal_direction": "confident, analytical, premium",
+    "visual_intensity": "balanced",
+    "composition_posture": "asymmetric"
+  },
+  "canvas": {
+    "aspect_ratio": "16:9",
+    "base_width": 1440,
+    "base_height": 810,
+    "viewport_policy": "fit the whole slide inside the viewport without native browser scroll",
+    "overflow_policy": "hidden-at-slide-level",
+    "preferred_units": ["cqi", "cqw", "cqh", "vmin"]
+  },
+  "typography": {
+    "fonts": {
+      "display": "Inter 700",
+      "body": "Inter 400",
+      "mono": "JetBrains Mono 500"
+    },
+    "type_scale": {
+      "display": "5.8cqi",
+      "title": "3.5cqi",
+      "subtitle": "2.2cqi",
+      "body": "1.52cqi",
+      "caption": "1.18cqi",
+      "label": "0.96cqi"
+    },
+    "line_heights": {
+      "display": 1.08,
+      "title": 1.1,
+      "body": 1.52,
+      "caption": 1.34
+    },
+    "font_weights": {
+      "display": 700,
+      "title": 700,
+      "body": 400,
+      "emphasis": 600
+    },
+    "body_measure": {
+      "body_max_inline_size": "68ch",
+      "caption_max_inline_size": "42ch"
+    },
+    "title_wrapping": {
+      "max_title_lines": 2,
+      "min_title_container_ratio": 0.58,
+      "fallback_order": ["rewrite", "restack", "widen-title-region", "shrink-last"]
+    }
+  },
+  "color_slots": {
+    "background": "#f4f1ea",
+    "surface": "#fffdf9",
+    "text_primary": "#161514",
+    "accent": "#14705c",
+    "muted": "#6c6a63"
+  },
+  "spacing_scale": {
+    "space_4": "0.4cqi",
+    "space_8": "0.8cqi",
+    "space_12": "1.2cqi",
+    "space_16": "1.6cqi",
+    "space_20": "2cqi",
+    "space_24": "2.4cqi",
+    "space_32": "3.2cqi",
+    "space_40": "4cqi"
+  },
+  "grid": {
+    "columns": 12,
+    "gutter": "1.6cqi",
+    "outer_margin": "2.6cqi",
+    "content_max_width": "92cqi"
+  },
+  "page_chrome": {
+    "navigation": "top-right previous and next controls",
+    "counter": "persistent current / total count",
+    "language_toggle": "sticky visible toggle in header chrome",
+    "deep_links": "slides use #slide-NN anchors"
+  },
+  "negative_space_policy": {
+    "default_blank_ratio": "22-30%",
+    "counterweight_rule": "blank fields must be held by one hero object, proof rail, or note panel"
+  },
+  "bilingual_policy": {
+    "default_mode": "toggle",
+    "title_word_limit_en": 22,
+    "title_char_limit_zh": 28,
+    "fallback_order": ["rewrite", "restack", "widen-title-region", "shrink-last"]
+  },
+  "motion_policy": {
+    "default_level": "subtle",
+    "reduced_motion_behavior": "disable slide travel and retain only opacity fades"
+  },
+  "layout_do": [
+    "keep one dominant visual anchor per slide",
+    "use proportional grid zones instead of arbitrary absolute coordinates",
+    "let diagrams and proof objects carry the argument"
+  ],
+  "layout_dont": [
+    "narrow title columns",
+    "duplicate agenda after cover navigation already orients",
+    "flatten logic-heavy slides into generic card rows"
+  ]
+}

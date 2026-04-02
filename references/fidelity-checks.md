@@ -64,3 +64,7 @@ When reviewing a rebuilt slide, ask:
 - Does the page establish a clear focal point and reading path within two seconds?
 - Does the typography create authority and hierarchy instead of merely fitting text on the page?
 - Does the composition feel authored and persuasive, or just clean and serviceable?
+- If you hide all text, is there still one obvious visual landing point, or does the page lose its center of gravity?
+- Is the content field visibly denser than the empty field, or has whitespace turned into an unsupported dead zone?
+- Looking only at size and weight, can you tell title, subtitle, and body apart within two seconds?
+- When switching languages, do the corresponding blocks stay structurally aligned instead of causing a major jump in page balance?

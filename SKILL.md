@@ -64,6 +64,7 @@ Use this skill to turn an existing deck into a web presentation without losing i
 
 - If the user provides internal reference decks, render and review them visually before styling the target deck.
 - Write `12-reference-study/reference-deck-notes.md`.
+- Write `12-reference-study/reference-deck-notes.yaml` using the schema in [reference-deck-learning.md](./references/reference-deck-learning.md).
 - Extract at least:
   - deck shell rules
   - cover and section-divider rules
@@ -121,7 +122,8 @@ Use this skill to turn an existing deck into a web presentation without losing i
 ### 5. Decide the Rebuild Strategy
 
 - Write `35-strategy/rebuild-strategy.md`.
-- Write `35-strategy/deck-design-system.md` as a deck-level design contract before implementation. Borrow the useful discipline of `DESIGN.md`: theme, palette, type hierarchy, shell rules, layout principles, depth, do/don't rules, responsive behavior, and agent-facing reminders.
+- Copy [deck-design-system-template.md](./references/deck-design-system-template.md) into `35-strategy/deck-design-system.md`, then replace the placeholders with deck-specific decisions. Do not start from a blank page.
+- Mirror the same rules into `35-strategy/deck-design-system.json` and validate it against `schemas/deck-design-system.schema.json`.
 - In `deck-design-system.md`, explicitly define the slide boundary model, aspect ratio policy, scaling model, permitted sizing units, and mobile degradation order for the deck.
 - Judge the visual direction from the theme, occasion, speaker, and audience. Use [style-judgment.md](./references/style-judgment.md).
 - If reference decks were provided, also ground the strategy in `12-reference-study/reference-deck-notes.md`.
@@ -135,10 +137,11 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Before implementation, write down the composition posture for the deck: dense or spacious, centered or asymmetric, sober or expressive, restrained or dramatic.
 - Use a high visual bar. Aim for polished modern web design quality, not just functional slide transcription.
 - Treat the design contract as executable guidance, not mood-board prose. If it is too vague for another agent to follow, tighten it before coding.
+- Pull typography, title-fit, and bilingual limits from [typography-rules.md](./references/typography-rules.md) instead of inventing them per deck.
 
 ### 6. Write the Storyline Before Layout
 
-- Turn the logic model into `40-rebuild/page-specs.md`.
+- Turn the logic model into `40-rebuild/page-specs.md` and `40-rebuild/page-specs.json`.
 - Work top-down:
   1. define the deck storyline
   2. define each slide's job
@@ -149,14 +152,19 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Keep one page spec per slide with:
   - source slide number
   - slide role
+  - archetype
   - core takeaway
   - required assets
   - target layout
   - proportional spatial map
+  - dominant visual anchor
+  - primary proof device
   - bilingual strategy
   - mobile degradation plan
   - animation intent
   - fidelity notes
+- Use layout pattern names only from [layout-patterns.md](./references/layout-patterns.md).
+- Use archetype names only from [page-archetypes.md](./references/page-archetypes.md) and, when helpful, start from `templates/archetypes/*.yml`.
 - Rewrite unclear source copy before adding translation.
 - Prefer shorter, clearer source-language copy over literal deck transcription.
 - Treat layout as authorship. Explicitly judge scale contrast, negative space, alignment rhythm, edge control, and whether the page feels designed rather than auto-composed.
@@ -167,6 +175,7 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Add bilingual content only after the source copy is solid.
 - Bind translation to content blocks, not to the slide as a monolith.
 - Default to a language toggle. Use side-by-side bilingual layouts only when density is low enough to stay elegant.
+- Use [bilingual-toggle-pattern.md](./references/bilingual-toggle-pattern.md) for DOM structure, CSS layering, and toggle behavior. Keep the toggle visible in slide chrome.
 - Keep both languages semantically aligned. Do not make one version more persuasive or more complete than the other unless the user asks.
 - When translated text becomes longer, adjust layout or hierarchy instead of shrinking text into unreadability.
 
@@ -184,6 +193,7 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Generate the deck only after `deck-brief.md`, `storyline.md`, `asset-register.md`, and `page-specs.md` are complete.
 - Preserve necessary text-image logic and diagram logic from the source.
 - Rebuild diagrams as semantic HTML, SVG, or CSS when possible.
+- Start from [slide-shell-template.html](./templates/slide-shell-template.html) for deck chrome, slide IDs, and navigation semantics unless the project already has a stronger shell.
 - Implement the deck as a viewport-bounded slide player:
   - give the main slide canvas a strict aspect ratio, typically `16 / 9`
   - constrain it to the viewport with `max-width` and `max-height` logic
@@ -203,6 +213,7 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Keep animations purposeful. Use motion to reveal logic, sequence, emphasis, or transitions, not decoration.
 - On mobile, preserve presentation logic before web convenience. Scale the slide first, simplify non-essential chrome second, and only collapse multi-column layouts when readability would otherwise fail.
 - Avoid slide-internal scrolling.
+- When a stronger example is helpful, inspect `examples/minimal-deck/` before inventing the shell from scratch.
 
 ### 9. Run QA and Repair
 
@@ -211,6 +222,7 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Check that each slide still fits as one bounded frame without native browser scrollbars appearing.
 - Check that aspect ratio, scale, and spacing feel synchronized instead of behaving like unrelated webpage modules.
 - Check for awkward heading wraps in both languages, especially on covers and opening analytical slides.
+- Measure title containers in DevTools or an equivalent inspector. The rendered title region should not drop below `55%` of the slide width unless the archetype explicitly justifies it.
 - Check for repeated information across headline, body, stat chips, and diagram labels. Remove duplicated layers instead of polishing them.
 - Check for duplicate navigation or duplicated overview content in the opening sequence.
 - Check for dead zones: large blank regions that do not improve focus, pacing, or composition.
@@ -234,6 +246,9 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Read [reference-deck-learning.md](./references/reference-deck-learning.md) when the user provides internal reference decks.
 - Read [external-design-lessons.md](./references/external-design-lessons.md) when the user asks for broader craft improvement or when title hierarchy, redundancy, and page control are weak.
 - Read [web-presentation-rules.md](./references/web-presentation-rules.md) when implementing slide containers, scaling behavior, playback constraints, or mobile degradation for web-based presentations.
+- Read [typography-rules.md](./references/typography-rules.md) when title fit, body measure, or bilingual robustness is at risk.
+- Read [layout-patterns.md](./references/layout-patterns.md) and [page-archetypes.md](./references/page-archetypes.md) before writing page specs.
+- Read [bilingual-toggle-pattern.md](./references/bilingual-toggle-pattern.md) before implementing the language switcher.
 
 ## Trigger Examples
 

@@ -1,0 +1,417 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hwjxp.github.io/deck-web-rebuilder/schemas/page-spec.schema.json",
+  "title": "Deck Web Rebuilder Page Specs",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "deck_id",
+    "default_bilingual_mode",
+    "slides"
+  ],
+  "properties": {
+    "deck_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "source_file": {
+      "type": "string"
+    },
+    "default_bilingual_mode": {
+      "type": "string",
+      "enum": [
+        "toggle",
+        "side-by-side",
+        "source-only"
+      ]
+    },
+    "slides": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/slideSpec"
+      }
+    }
+  },
+  "$defs": {
+    "localizedText": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "en",
+        "zh"
+      ],
+      "properties": {
+        "en": {
+          "type": "string",
+          "minLength": 1
+        },
+        "zh": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "assetRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "asset_id",
+        "role",
+        "action"
+      ],
+      "properties": {
+        "asset_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "hero-image",
+            "support-image",
+            "diagram",
+            "chart",
+            "table",
+            "logo",
+            "icon",
+            "texture",
+            "screenshot"
+          ]
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "keep",
+            "crop",
+            "redraw",
+            "translate",
+            "remove"
+          ]
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "bodyBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "purpose"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "lede",
+            "insight",
+            "bullets",
+            "caption",
+            "stat",
+            "label",
+            "quote",
+            "callout",
+            "note"
+          ]
+        },
+        "purpose": {
+          "type": "string",
+          "enum": [
+            "frame",
+            "interpret",
+            "prove",
+            "orient",
+            "annotate",
+            "close"
+          ]
+        },
+        "copy": {
+          "$ref": "#/$defs/localizedText"
+        }
+      }
+    },
+    "slideSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slide_id",
+        "source_slide_number",
+        "role",
+        "archetype",
+        "layout_pattern",
+        "takeaway",
+        "density",
+        "visual_anchor",
+        "title",
+        "body_blocks",
+        "assets",
+        "proportional_spatial_map",
+        "primary_proof_device",
+        "bilingual_mode",
+        "mobile_degradation_plan",
+        "negative_space_strategy",
+        "counterweight_strategy",
+        "animation_intent",
+        "forbidden_patterns"
+      ],
+      "properties": {
+        "slide_id": {
+          "type": "string",
+          "pattern": "^slide-[0-9]{2}$"
+        },
+        "source_slide_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "cover",
+            "section-divider",
+            "agenda",
+            "framing",
+            "problem",
+            "comparison",
+            "framework",
+            "process",
+            "timeline",
+            "proof",
+            "showcase",
+            "decision-close",
+            "appendix"
+          ]
+        },
+        "archetype": {
+          "type": "string",
+          "enum": [
+            "cover",
+            "section-divider",
+            "diagram-plus-insight",
+            "timeline",
+            "comparison-matrix",
+            "proof-strip",
+            "showcase",
+            "decision-close"
+          ]
+        },
+        "layout_pattern": {
+          "type": "string",
+          "enum": [
+            "HERO-FULL",
+            "SPLIT-50",
+            "SPLIT-60-40",
+            "HEADLINE-PROOF",
+            "GRID-2COL",
+            "GRID-3COL",
+            "TIMELINE-H",
+            "DIAGRAM-CENTER"
+          ]
+        },
+        "takeaway": {
+          "$ref": "#/$defs/localizedText"
+        },
+        "density": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "visual_anchor": {
+          "type": "string",
+          "enum": [
+            "hero-image",
+            "diagram",
+            "timeline",
+            "comparison-matrix",
+            "proof-strip",
+            "stat-cluster",
+            "showcase-sample",
+            "decision-panel",
+            "table"
+          ]
+        },
+        "title": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "text",
+            "max_lines",
+            "preferred_width_ch",
+            "min_container_ratio",
+            "fallback_strategy"
+          ],
+          "properties": {
+            "text": {
+              "$ref": "#/$defs/localizedText"
+            },
+            "max_lines": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3
+            },
+            "preferred_width_ch": {
+              "type": "integer",
+              "minimum": 18,
+              "maximum": 72
+            },
+            "min_container_ratio": {
+              "type": "number",
+              "minimum": 0.55,
+              "maximum": 1
+            },
+            "fallback_strategy": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "rewrite",
+                  "restack",
+                  "widen-title-region",
+                  "shrink-last"
+                ]
+              }
+            }
+          }
+        },
+        "body_blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/bodyBlock"
+          }
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assetRef"
+          }
+        },
+        "proportional_spatial_map": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "title_region_pct",
+            "anchor_region_pct",
+            "support_region_pct"
+          ],
+          "properties": {
+            "title_region_pct": {
+              "type": "integer",
+              "minimum": 55,
+              "maximum": 100
+            },
+            "anchor_region_pct": {
+              "type": "integer",
+              "minimum": 20,
+              "maximum": 100
+            },
+            "support_region_pct": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 80
+            },
+            "notes": {
+              "type": "string"
+            }
+          }
+        },
+        "primary_proof_device": {
+          "type": "string",
+          "enum": [
+            "none",
+            "diagram",
+            "chart",
+            "timeline",
+            "comparison-matrix",
+            "hero-image",
+            "table",
+            "proof-strip"
+          ]
+        },
+        "bilingual_mode": {
+          "type": "string",
+          "enum": [
+            "toggle",
+            "side-by-side",
+            "source-only"
+          ]
+        },
+        "mobile_degradation_plan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "order",
+            "reflow_threshold"
+          ],
+          "properties": {
+            "order": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "string",
+                "enum": [
+                  "scale-slide",
+                  "trim-decoration",
+                  "tighten-spacing",
+                  "rewrite-copy",
+                  "reflow-layout"
+                ]
+              }
+            },
+            "reflow_threshold": {
+              "type": "string"
+            },
+            "notes": {
+              "type": "string"
+            }
+          }
+        },
+        "negative_space_strategy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "counterweight_strategy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "animation_intent": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "none",
+              "reveal-sequence",
+              "focus-shift",
+              "proof-build",
+              "section-transition"
+            ]
+          }
+        },
+        "forbidden_patterns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "duplicate-agenda",
+              "narrow-title-column",
+              "floating-card-row",
+              "double-proof-layer",
+              "generic-cardification",
+              "dead-zone",
+              "long-scroll-mobile"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

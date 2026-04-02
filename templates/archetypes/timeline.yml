@@ -1,0 +1,32 @@
+archetype: timeline
+layout_pattern: TIMELINE-H
+use_when:
+  - roadmap
+  - process sequence
+  - launch plan
+dominant_reading_path:
+  - headline
+  - timeline rail
+  - supporting detail
+visual_anchor: timeline
+title_region:
+  min_container_ratio: 0.62
+  max_lines: 2
+body_structure:
+  - eyebrow
+  - title
+  - lede
+  - timeline
+  - short summary panel
+proof_device: timeline
+bilingual:
+  mode: toggle
+mobile:
+  order:
+    - scale-slide
+    - tighten-spacing
+    - reflow-layout
+forbidden_patterns:
+  - floating-card-row
+  - generic-cardification
+  - long-scroll-mobile

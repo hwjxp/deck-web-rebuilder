@@ -1,0 +1,302 @@
+{
+  "deck_id": "aurora-commerce-os",
+  "source_file": "example",
+  "default_bilingual_mode": "toggle",
+  "slides": [
+    {
+      "slide_id": "slide-01",
+      "source_slide_number": 1,
+      "role": "cover",
+      "archetype": "cover",
+      "layout_pattern": "HERO-FULL",
+      "takeaway": {
+        "en": "Aurora is the operating system for premium cross-border commerce.",
+        "zh": "Aurora 是高端跨境零售的运营系统。"
+      },
+      "density": "low",
+      "visual_anchor": "hero-image",
+      "title": {
+        "text": {
+          "en": "Aurora Commerce OS For Premium Retail Launches",
+          "zh": "面向高端零售发布的 Aurora Commerce OS"
+        },
+        "max_lines": 2,
+        "preferred_width_ch": 30,
+        "min_container_ratio": 0.66,
+        "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
+      },
+      "body_blocks": [
+        {
+          "id": "cover-subtitle",
+          "kind": "lede",
+          "purpose": "frame",
+          "copy": {
+            "en": "A five-slide reference build for bounded, bilingual web presentations.",
+            "zh": "一个用于受限视口双语 Web 演示的五页参考样张。"
+          }
+        }
+      ],
+      "assets": [
+        {
+          "asset_id": "cover-field",
+          "role": "hero-image",
+          "action": "redraw",
+          "notes": "Tonal field and proof number cluster."
+        }
+      ],
+      "proportional_spatial_map": {
+        "title_region_pct": 68,
+        "anchor_region_pct": 70,
+        "support_region_pct": 16,
+        "notes": "Left-heavy title mass with proof chip cluster on the right."
+      },
+      "primary_proof_device": "hero-image",
+      "bilingual_mode": "toggle",
+      "mobile_degradation_plan": {
+        "order": ["scale-slide", "trim-decoration", "tighten-spacing", "rewrite-copy"],
+        "reflow_threshold": "Only if the title becomes illegible after scaling.",
+        "notes": "Keep the hero block intact."
+      },
+      "negative_space_strategy": "Use one calm field around the title to create authority.",
+      "counterweight_strategy": "Balance the title with a right-side proof chip cluster.",
+      "animation_intent": ["section-transition"],
+      "forbidden_patterns": ["duplicate-agenda", "narrow-title-column", "dead-zone"]
+    },
+    {
+      "slide_id": "slide-02",
+      "source_slide_number": 2,
+      "role": "framework",
+      "archetype": "diagram-plus-insight",
+      "layout_pattern": "DIAGRAM-CENTER",
+      "takeaway": {
+        "en": "Aurora connects launch planning, live operations, and retention into one loop.",
+        "zh": "Aurora 将发布策划、实时运营和复购留存连接成一个闭环。"
+      },
+      "density": "medium",
+      "visual_anchor": "diagram",
+      "title": {
+        "text": {
+          "en": "One Loop Connects Planning, Launch, And Retention",
+          "zh": "一个闭环贯通策划、发布与留存"
+        },
+        "max_lines": 2,
+        "preferred_width_ch": 32,
+        "min_container_ratio": 0.62,
+        "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
+      },
+      "body_blocks": [
+        {
+          "id": "loop-insight",
+          "kind": "insight",
+          "purpose": "interpret",
+          "copy": {
+            "en": "The central loop is the proof object; the side note clarifies why the loop compounds operational efficiency.",
+            "zh": "中央闭环本身就是证明装置，侧边说明只负责解释它如何叠加运营效率。"
+          }
+        }
+      ],
+      "assets": [
+        {
+          "asset_id": "loop-diagram",
+          "role": "diagram",
+          "action": "redraw",
+          "notes": "Primary proof object."
+        }
+      ],
+      "proportional_spatial_map": {
+        "title_region_pct": 64,
+        "anchor_region_pct": 56,
+        "support_region_pct": 28,
+        "notes": "Diagram centered, note panel attached to the lower-right."
+      },
+      "primary_proof_device": "diagram",
+      "bilingual_mode": "toggle",
+      "mobile_degradation_plan": {
+        "order": ["scale-slide", "trim-decoration", "tighten-spacing", "reflow-layout"],
+        "reflow_threshold": "If node labels collide after scaling.",
+        "notes": "Keep the loop visible before collapsing any notes."
+      },
+      "negative_space_strategy": "Keep the outer field quiet so the loop remains the visual magnet.",
+      "counterweight_strategy": "Use the attached note panel and title band as the balancing mass.",
+      "animation_intent": ["focus-shift", "proof-build"],
+      "forbidden_patterns": ["narrow-title-column", "double-proof-layer", "generic-cardification"]
+    },
+    {
+      "slide_id": "slide-03",
+      "source_slide_number": 3,
+      "role": "timeline",
+      "archetype": "timeline",
+      "layout_pattern": "TIMELINE-H",
+      "takeaway": {
+        "en": "The rollout moves through four controlled phases over twelve weeks.",
+        "zh": "整个 rollout 在十二周内分四个受控阶段推进。"
+      },
+      "density": "medium",
+      "visual_anchor": "timeline",
+      "title": {
+        "text": {
+          "en": "A Twelve-Week Rollout Moves Through Four Distinct Phases",
+          "zh": "十二周 rollout 分四个明确阶段推进"
+        },
+        "max_lines": 2,
+        "preferred_width_ch": 34,
+        "min_container_ratio": 0.6,
+        "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
+      },
+      "body_blocks": [
+        {
+          "id": "timeline-note",
+          "kind": "caption",
+          "purpose": "annotate",
+          "copy": {
+            "en": "Each phase has one job, one owner, and one measurable readiness signal.",
+            "zh": "每个阶段都对应一个任务、一个 owner 和一个可度量的 readiness 信号。"
+          }
+        }
+      ],
+      "assets": [
+        {
+          "asset_id": "rollout-timeline",
+          "role": "diagram",
+          "action": "redraw",
+          "notes": "Horizontal sequence rail."
+        }
+      ],
+      "proportional_spatial_map": {
+        "title_region_pct": 60,
+        "anchor_region_pct": 64,
+        "support_region_pct": 22,
+        "notes": "Timeline takes the center band, note below."
+      },
+      "primary_proof_device": "timeline",
+      "bilingual_mode": "toggle",
+      "mobile_degradation_plan": {
+        "order": ["scale-slide", "trim-decoration", "tighten-spacing", "reflow-layout"],
+        "reflow_threshold": "If node labels drop below readable size.",
+        "notes": "Mobile may flip to a vertical rail, but must still fit within one slide."
+      },
+      "negative_space_strategy": "Leave quiet space above and below the rail so sequence reads cleanly.",
+      "counterweight_strategy": "Use milestone chips and the title band to hold the composition.",
+      "animation_intent": ["reveal-sequence"],
+      "forbidden_patterns": ["narrow-title-column", "generic-cardification", "long-scroll-mobile"]
+    },
+    {
+      "slide_id": "slide-04",
+      "source_slide_number": 4,
+      "role": "showcase",
+      "archetype": "showcase",
+      "layout_pattern": "SPLIT-60-40",
+      "takeaway": {
+        "en": "The product experience proves that operational rigor can still feel premium.",
+        "zh": "产品体验证明，运营严谨性也可以保持高级感。"
+      },
+      "density": "low",
+      "visual_anchor": "showcase-sample",
+      "title": {
+        "text": {
+          "en": "A Premium Experience Does Not Need To Sacrifice Control",
+          "zh": "高级体验不必牺牲运营控制力"
+        },
+        "max_lines": 2,
+        "preferred_width_ch": 32,
+        "min_container_ratio": 0.6,
+        "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
+      },
+      "body_blocks": [
+        {
+          "id": "showcase-note",
+          "kind": "insight",
+          "purpose": "interpret",
+          "copy": {
+            "en": "The large sample is the hero. The note panel stays tight and does not become a second gallery.",
+            "zh": "大样图是主角，侧边说明必须收紧，不能再变成第二组 gallery。"
+          }
+        }
+      ],
+      "assets": [
+        {
+          "asset_id": "hero-sample",
+          "role": "support-image",
+          "action": "keep",
+          "notes": "Use one strong product visual instead of several equal samples."
+        }
+      ],
+      "proportional_spatial_map": {
+        "title_region_pct": 62,
+        "anchor_region_pct": 66,
+        "support_region_pct": 28,
+        "notes": "Large sample left, note panel right."
+      },
+      "primary_proof_device": "hero-image",
+      "bilingual_mode": "toggle",
+      "mobile_degradation_plan": {
+        "order": ["scale-slide", "trim-decoration", "tighten-spacing", "rewrite-copy"],
+        "reflow_threshold": "Only if the sample annotation becomes unreadable.",
+        "notes": "Scale first; preserve the single-sample focus."
+      },
+      "negative_space_strategy": "Let the sample breathe and keep margins quiet around it.",
+      "counterweight_strategy": "Hold the far side with one compact note stack.",
+      "animation_intent": ["focus-shift"],
+      "forbidden_patterns": ["narrow-title-column", "floating-card-row", "dead-zone"]
+    },
+    {
+      "slide_id": "slide-05",
+      "source_slide_number": 5,
+      "role": "decision-close",
+      "archetype": "decision-close",
+      "layout_pattern": "HEADLINE-PROOF",
+      "takeaway": {
+        "en": "The team is ready for a phased pilot with one executive sponsor.",
+        "zh": "团队已准备好在一位高层 sponsor 支持下进入分阶段 pilot。"
+      },
+      "density": "medium",
+      "visual_anchor": "decision-panel",
+      "title": {
+        "text": {
+          "en": "Approve A Twelve-Week Pilot With One Executive Sponsor",
+          "zh": "批准一项为期十二周、由一位高层 sponsor 牵头的 pilot"
+        },
+        "max_lines": 2,
+        "preferred_width_ch": 34,
+        "min_container_ratio": 0.64,
+        "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
+      },
+      "body_blocks": [
+        {
+          "id": "decision-actions",
+          "kind": "callout",
+          "purpose": "close",
+          "copy": {
+            "en": "Decision, owner, and success metric are grouped into one close panel so the ending feels resolved.",
+            "zh": "决策、owner 和成功指标被收束到一个 closing panel 中，确保结尾是有收口感的。"
+          }
+        }
+      ],
+      "assets": [
+        {
+          "asset_id": "decision-panel",
+          "role": "table",
+          "action": "redraw",
+          "notes": "One compact decision structure."
+        }
+      ],
+      "proportional_spatial_map": {
+        "title_region_pct": 66,
+        "anchor_region_pct": 54,
+        "support_region_pct": 26,
+        "notes": "Closing statement on top, decision panel below."
+      },
+      "primary_proof_device": "table",
+      "bilingual_mode": "toggle",
+      "mobile_degradation_plan": {
+        "order": ["scale-slide", "trim-decoration", "tighten-spacing", "rewrite-copy"],
+        "reflow_threshold": "Only if the decision panel labels break.",
+        "notes": "Preserve one clear close panel."
+      },
+      "negative_space_strategy": "Use top breathing room to make the close feel decisive rather than crowded.",
+      "counterweight_strategy": "Decision panel anchors the lower field and closes the deck.",
+      "animation_intent": ["reveal-sequence", "section-transition"],
+      "forbidden_patterns": ["narrow-title-column", "double-proof-layer", "floating-card-row"]
+    }
+  ]
+}

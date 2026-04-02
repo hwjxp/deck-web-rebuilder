@@ -30,6 +30,8 @@ Include:
 - anti-patterns to avoid
 - what should transfer to the target deck
 
+Also write `12-reference-study/reference-deck-notes.yaml` using the structure in [reference-deck-learning.md](./reference-deck-learning.md).
+
 ## `20-logic/storyline.md`
 
 Turn the deck into a structured narrative.
@@ -112,6 +114,8 @@ Include:
 
 The file should be concrete enough that another agent could build new slides in the same language without guessing.
 
+Also write `35-strategy/deck-design-system.json` and validate it against `schemas/deck-design-system.schema.json`.
+
 ## `40-rebuild/page-specs.md`
 
 Write one section per destination slide.
@@ -132,6 +136,8 @@ Include for each slide:
 - fidelity notes
 
 Do not move into implementation until every source slide has a page spec.
+
+Also write `40-rebuild/page-specs.json` and validate it against `schemas/page-spec.schema.json`.
 
 ## `40-rebuild/pilot-selection.md`
 
@@ -161,17 +167,32 @@ Include:
 - PDF export check
 - final go or no-go note
 
+## `50-qa/visual-checklist.md`
+
+Keep a short, reusable checklist for:
+
+- two-second hierarchy test
+- squint / gravity test
+- dead-zone check
+- duplicate-proof check
+- bilingual-fit check
+- mobile deck-behavior check
+
 ## Minimum Gate
 
 Before generating final HTML, confirm these files exist and are meaningful:
 
 - `10-understanding/deck-brief.md`
 - `12-reference-study/reference-deck-notes.md`
+- `12-reference-study/reference-deck-notes.yaml`
 - `20-logic/storyline.md`
 - `30-assets/asset-register.md`
 - `35-strategy/rebuild-strategy.md`
 - `35-strategy/deck-design-system.md`
+- `35-strategy/deck-design-system.json`
 - `40-rebuild/page-specs.md`
+- `40-rebuild/page-specs.json`
 - `40-rebuild/pilot-selection.md`
+- `50-qa/visual-checklist.md`
 
 Use `scripts/check_stage_gates.py <workspace-dir>` for a quick validation pass.

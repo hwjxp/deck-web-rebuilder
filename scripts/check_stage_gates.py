@@ -1,20 +1,35 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
-import re
+
+
+SCRIPTS_DIR = Path(__file__).resolve().parent
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
+from _deck_checks_common import DESIGN_SCHEMA, DESIGN_SYSTEM_JSON, load_workspace_json, maybe_validate_with_jsonschema
+from check_bilingual_fit import run_check as run_bilingual_fit_check
+from check_layout_quality import run_check as run_layout_quality_check
+from check_page_specs import run_check as run_page_spec_check
+from check_redundancy import run_check as run_redundancy_check
 
 
 REQUIRED_FILES = [
     Path("10-understanding/deck-brief.md"),
     Path("12-reference-study/reference-deck-notes.md"),
+    Path("12-reference-study/reference-deck-notes.yaml"),
     Path("20-logic/storyline.md"),
     Path("30-assets/asset-register.md"),
     Path("35-strategy/rebuild-strategy.md"),
     Path("35-strategy/deck-design-system.md"),
+    Path("35-strategy/deck-design-system.json"),
     Path("40-rebuild/page-specs.md"),
+    Path("40-rebuild/page-specs.json"),
     Path("40-rebuild/pilot-selection.md"),
+    Path("50-qa/visual-checklist.md"),
 ]
 
 GENERATED_DECK_FILES = {
@@ -39,6 +54,8 @@ FIXED_LAYOUT_PX_PATTERN = re.compile(
     r"\b(left|right|top|bottom|width|height)\s*:\s*(\d+(?:\.\d+)?)px\b",
     re.IGNORECASE,
 )
+SLIDE_SPEC_HEADING_PATTERN = re.compile(r"^##\s+slide-[0-9]{2}\b", re.IGNORECASE | re.MULTILINE)
+SLIDE_ID_PATTERN = re.compile(r"slide-[0-9]{2}", re.IGNORECASE)
 
 
 def is_meaningful(path: Path) -> bool:
@@ -53,17 +70,126 @@ def is_meaningful(path: Path) -> bool:
             continue
         if re.fullmatch(r"\|?\s*[-:| ]+\|?", line):
             continue
-        if re.fullmatch(r"\|?\s*[A-Za-z][A-Za-z /-]*\s*(\|\s*[A-Za-z][A-Za-z /-]*\s*)+\|?", line):
+        if re.fullmatch(r"\|?\s*[A-Za-z][A-Za-z /_-]*\s*(\|\s*[A-Za-z][A-Za-z /_-]*\s*)+\|?", line):
             continue
         if re.fullmatch(r"-\s+[^:]+:\s*", line):
+            continue
+        if re.fullmatch(r"[{}\[\],\": ]+", line):
             continue
         meaningful_lines.append(line)
 
     return len(meaningful_lines) >= 2
 
 
+def meaningful_lines(text: str) -> list[str]:
+    lines: list[str] = []
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if re.fullmatch(r"\|?\s*[-:| ]+\|?", line):
+            continue
+        if re.fullmatch(r"\|?\s*[A-Za-z][A-Za-z /_-]*\s*(\|\s*[A-Za-z][A-Za-z /_-]*\s*)+\|?", line):
+            continue
+        if re.fullmatch(r"-\s+[^:]+:\s*", line):
+            continue
+        if re.fullmatch(r"[{}\[\],\": ]+", line):
+            continue
+        lines.append(line)
+    return lines
+
+
 def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+def check_deck_brief(path: Path) -> list[str]:
+    text = read_text(path)
+    issues: list[str] = []
+    prose = " ".join(meaningful_lines(text))
+    if len(prose) <= 150:
+        issues.append("deck-brief.md is too short; write a real deck-level understanding before moving on")
+    lowered = text.lower()
+    for keyword in ("audience", "persuasion goal"):
+        if keyword not in lowered:
+            issues.append(f"deck-brief.md should explicitly include `{keyword}`")
+    return issues
+
+
+def check_design_system_markdown(path: Path) -> list[str]:
+    text = read_text(path)
+    issues: list[str] = []
+    if "--font" not in text and "font-size" not in text:
+        issues.append("deck-design-system.md should define real typography tokens such as `--font` or `font-size`")
+    if "title" not in text.lower() or "bilingual" not in text.lower():
+        issues.append("deck-design-system.md should include title and bilingual rules, not only mood-board prose")
+    return issues
+
+
+def check_reference_notes_yaml(path: Path) -> list[str]:
+    text = read_text(path)
+    issues: list[str] = []
+    for token in ("reference_deck_notes:", "shell:", "page_archetypes:", "text_image_contract:", "anti_patterns:"):
+        if token not in text:
+            issues.append(f"reference-deck-notes.yaml should include `{token}`")
+    return issues
+
+
+def check_page_specs_markdown(path: Path) -> list[str]:
+    text = read_text(path)
+    count = len(SLIDE_SPEC_HEADING_PATTERN.findall(text))
+    if count < 3:
+        return ["page-specs.md should contain at least 3 concrete `## slide-NN` sections before implementation"]
+    return []
+
+
+def check_pilot_selection(path: Path) -> list[str]:
+    text = read_text(path)
+    slide_ids = {match.lower() for match in SLIDE_ID_PATTERN.findall(text)}
+    if len(slide_ids) < 5:
+        return ["pilot-selection.md should identify at least 5 slide ids such as `slide-01`"]
+    return []
+
+
+def check_design_system_json(workspace: Path) -> list[str]:
+    issues: list[str] = []
+    try:
+        data = load_workspace_json(workspace, DESIGN_SYSTEM_JSON)
+    except FileNotFoundError:
+        return [f"missing {DESIGN_SYSTEM_JSON}"]
+    except Exception as exc:  # pragma: no cover - defensive path
+        return [f"could not read {DESIGN_SYSTEM_JSON}: {exc}"]
+
+    issues.extend(maybe_validate_with_jsonschema(data, DESIGN_SCHEMA))
+
+    title_wrap = data.get("typography", {}).get("title_wrapping", {})
+    if title_wrap.get("min_title_container_ratio", 0) < 0.55:
+        issues.append("deck-design-system.json sets a title container ratio below 55%")
+
+    fallback_order = title_wrap.get("fallback_order", [])
+    if fallback_order[:3] != ["rewrite", "restack", "widen-title-region"]:
+        issues.append("deck-design-system.json should prioritize rewrite -> restack -> widen-title-region before shrinking")
+
+    language_toggle = data.get("page_chrome", {}).get("language_toggle", "").lower()
+    if "toggle" not in language_toggle:
+        issues.append("deck-design-system.json should define a persistent language toggle in page chrome")
+
+    return issues
+
+
+def run_script_checks(workspace: Path) -> list[str]:
+    issues: list[str] = []
+    for issue in check_design_system_json(workspace):
+        issues.append(f"design system: {issue}")
+    for label, runner in (
+        ("page specs", run_page_spec_check),
+        ("layout quality", run_layout_quality_check),
+        ("bilingual fit", run_bilingual_fit_check),
+        ("redundancy", run_redundancy_check),
+    ):
+        for issue in runner(workspace):
+            issues.append(f"{label}: {issue}")
+    return issues
 
 
 def inspect_generated_deck(workspace: Path) -> list[str]:
@@ -76,19 +202,14 @@ def inspect_generated_deck(workspace: Path) -> list[str]:
 
     if not ASPECT_RATIO_PATTERN.search(css):
         issues.append("missing `aspect-ratio: 16 / 9` on the generated slide canvas")
-
     if not VIEWPORT_HEIGHT_PATTERN.search(css) or not VIEWPORT_WIDTH_PATTERN.search(css):
         issues.append("missing clear viewport-bound sizing tokens such as `100vh` and `100vw`")
-
     if not OVERFLOW_HIDDEN_PATTERN.search(css):
         issues.append("missing `overflow: hidden` needed for bounded slide playback")
-
     if not SCROLL_SUPPRESSION_PATTERN.search(css):
         issues.append("missing native-scroll suppression on `html` or `body` for presentation mode")
-
     if not CONTAINER_TYPE_PATTERN.search(css):
         issues.append("missing `container-type` declaration for synchronized slide scaling")
-
     if not SLIDE_RELATIVE_UNIT_PATTERN.search(css):
         issues.append("missing container-query or slide-relative sizing units such as `cqi`, `cqw`, `cqh`, or `vmin`")
 
@@ -99,10 +220,11 @@ def inspect_generated_deck(workspace: Path) -> list[str]:
             fixed_layout_hits.append(f"{match.group(1)}: {match.group(2)}px")
         if len(fixed_layout_hits) >= 5:
             break
-
     if fixed_layout_hits:
-        joined = ", ".join(fixed_layout_hits)
-        issues.append(f"found fixed-pixel layout anchors that suggest document-like positioning: {joined}")
+        issues.append(
+            "found fixed-pixel layout anchors that suggest document-like positioning: "
+            + ", ".join(fixed_layout_hits)
+        )
 
     return issues
 
@@ -127,6 +249,16 @@ def main() -> int:
         if not is_meaningful(full_path):
             weak.append(relative_path)
 
+    content_issues: list[str] = []
+    script_issues: list[str] = []
+    if not missing:
+        content_issues.extend(check_deck_brief(workspace / "10-understanding/deck-brief.md"))
+        content_issues.extend(check_reference_notes_yaml(workspace / "12-reference-study/reference-deck-notes.yaml"))
+        content_issues.extend(check_design_system_markdown(workspace / "35-strategy/deck-design-system.md"))
+        content_issues.extend(check_page_specs_markdown(workspace / "40-rebuild/page-specs.md"))
+        content_issues.extend(check_pilot_selection(workspace / "40-rebuild/pilot-selection.md"))
+        script_issues = run_script_checks(workspace)
+
     deck_issues = inspect_generated_deck(workspace)
 
     if missing:
@@ -137,17 +269,26 @@ def main() -> int:
         print("[FAIL] Stage artifacts exist but still look skeletal:")
         for path in weak:
             print(f"  - {path}")
+    if content_issues:
+        print("[FAIL] Required documents exist but still miss key design-system content:")
+        for issue in content_issues:
+            print(f"  - {issue}")
+    if script_issues:
+        print("[FAIL] Schema-driven quality checks failed:")
+        for issue in script_issues:
+            print(f"  - {issue}")
     if deck_issues:
         print("[FAIL] Generated deck does not yet satisfy web-presentation constraints:")
         for issue in deck_issues:
             print(f"  - {issue}")
 
-    if missing or weak or deck_issues:
+    if missing or weak or content_issues or script_issues or deck_issues:
         return 1
 
     print("[OK] Required stage artifacts exist and look non-trivial.")
     for path in REQUIRED_FILES:
         print(f"  - {path}")
+    print("[OK] Schema-driven page, bilingual, layout, and redundancy checks passed.")
     if (workspace / GENERATED_DECK_FILES["styles"]).exists():
         print("[OK] Generated deck also satisfies web-presentation static checks.")
     return 0

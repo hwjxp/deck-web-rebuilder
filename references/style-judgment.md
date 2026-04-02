@@ -46,11 +46,15 @@ Decide these before layout:
 
 ## Quick Mapping
 
-- Investor or strategy deck: precise, confident, high signal, restrained motion.
-- Product keynote: memorable, dramatic, larger visual gestures, stronger transitions.
-- Training or educational deck: clear hierarchy, patient pacing, explicit sequence cues.
-- Research or technical deck: sober palette, strong diagram legibility, evidence-first layouts.
-- Internal operating review: compact, structured, low drama, high readability.
+| Occasion | Font Weight Posture | Line Height | Negative Space | Symmetry | Color Use |
+| --- | --- | --- | --- | --- | --- |
+| Investor / Strategy | bold display `700`, body `400-500` | tight title `1.1`, body `1.45` | `40%+` if the slide is sparse | usually asymmetric, left-heavy | `<= 3` semantic colors |
+| Product Keynote | stronger contrast between display and body | medium `1.3-1.5` | `20-30%` | centered hero allowed | brand color plus one highlight |
+| Training / Education | regular to medium `400-600` | generous `1.55-1.65` | around `20%` | symmetric grid-led layouts | moderate saturation with section cues |
+| Research / Technical | restrained weights, strong labels | standard `1.45-1.55` | `15-25%` | grid-led with clear proof zone | neutral palette plus one proof color |
+| Internal Operating Review | medium `500`, low drama | standard `1.4-1.5` | `<= 15%` | left-aligned, table-friendly | monochrome plus one functional accent |
+
+Write the chosen values into `deck-design-system.md` and `deck-design-system.json`. Do not stop at naming the occasion.
 
 ## Failure Modes
 

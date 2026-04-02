@@ -1,0 +1,31 @@
+archetype: proof-strip
+layout_pattern: HEADLINE-PROOF
+use_when:
+  - proof page
+  - sample gallery with one clear conclusion
+  - benchmark page
+dominant_reading_path:
+  - headline
+  - proof strip
+  - interpretation
+visual_anchor: proof-strip
+title_region:
+  min_container_ratio: 0.62
+  max_lines: 2
+body_structure:
+  - eyebrow
+  - title
+  - lede
+  - proof strip
+  - side metric or conclusion
+proof_device: proof-strip
+bilingual:
+  mode: toggle
+mobile:
+  order:
+    - scale-slide
+    - trim-decoration
+    - reflow-layout
+forbidden_patterns:
+  - double-proof-layer
+  - floating-card-row

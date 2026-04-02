@@ -1,0 +1,32 @@
+archetype: decision-close
+layout_pattern: SPLIT-60-40
+use_when:
+  - closing ask
+  - approval gate
+  - decision summary
+dominant_reading_path:
+  - closing headline
+  - decision panel
+  - numbered asks
+visual_anchor: decision-panel
+title_region:
+  min_container_ratio: 0.6
+  max_lines: 3
+body_structure:
+  - eyebrow
+  - title
+  - closing thesis
+  - decision panel
+  - ask cards
+proof_device: decision-panel
+bilingual:
+  mode: toggle
+mobile:
+  order:
+    - scale-slide
+    - trim-decoration
+    - tighten-spacing
+    - reflow-layout
+forbidden_patterns:
+  - duplicate-agenda
+  - generic-cardification
