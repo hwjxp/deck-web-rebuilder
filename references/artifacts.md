@@ -101,11 +101,14 @@ Include:
 - color palette and semantic roles
 - typography hierarchy and title behavior
 - slide-shell and navigation rules
+- slide boundary model and aspect ratio policy
+- scaling model and preferred sizing units
 - layout principles, spacing, and whitespace posture
 - component patterns for cards, diagrams, callouts, and image frames
 - depth and elevation rules
 - do and don't rules
 - responsive behavior
+- mobile degradation order
 
 The file should be concrete enough that another agent could build new slides in the same language without guessing.
 
@@ -122,8 +125,10 @@ Include for each slide:
 - required copy blocks
 - required assets
 - target layout pattern
+- proportional spatial map
 - animation intent
 - bilingual treatment
+- mobile degradation plan
 - fidelity notes
 
 Do not move into implementation until every source slide has a page spec.
@@ -149,6 +154,7 @@ Include:
 
 - layout issues found and fixed
 - unresolved issues
+- bounded-slide checks
 - relationship checks
 - bilingual checks
 - navigation checks

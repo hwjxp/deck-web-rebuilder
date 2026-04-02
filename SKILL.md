@@ -1,23 +1,28 @@
 ---
 name: deck-web-rebuilder
-description: Rebuild existing presentation decks (`.ppt`, `.pptx`, `.key`, exported `.pdf`) into faithful, interactive web presentations only after first understanding the full deck's theme, storyline, slide logic, and asset logic. Use when Codex must study a deck end-to-end before redesigning it for the web, cleaning or redrawing images and diagrams, preserving necessary text-image relationships, adding bilingual copy, navigation, deep links, animations, or PDF export.
+description: Rebuild existing presentation decks (`.ppt`, `.pptx`, `.key`, exported `.pdf`) into faithful, interactive, viewport-bounded web presentations only after first understanding the full deck's theme, storyline, slide logic, and asset logic. Use when Codex must study a deck end-to-end before redesigning it for the web while preserving slide boundaries, logical flow, text-image relationships, navigation, bilingual copy, animations, or PDF export.
 ---
 
 # Deck Web Rebuilder
 
 ## Overview
 
-Use this skill to turn an existing deck into a web presentation without losing its message, logical structure, or required visual relationships. Read the entire deck first, build the storyline second, and rebuild the web deck only after the deck brief, logic model, and asset register are complete. When internal reference decks are available, study them before choosing a visual direction. For non-trivial decks, build a five-slide pilot before scaling to the full rebuild.
+Use this skill to turn an existing deck into a web presentation without losing its message, logical structure, or required visual relationships. The target output is a web-based presentation, not a conventional landing page, blog, or long scrolly document. Read the entire deck first, build the storyline second, and rebuild the web deck only after the deck brief, logic model, and asset register are complete. When internal reference decks are available, study them before choosing a visual direction. For non-trivial decks, build a five-slide pilot before scaling to the full rebuild.
 
 ## Non-Negotiables
 
 - Read the whole deck before editing anything.
 - Do not work slide by slide from the start. First understand the deck-level message, audience, occasion, and persuasion goal.
 - Work top-down: `storyline -> layout -> content`.
+- Treat the output as a browser-based slide deck, not a normal web page. Preserve slide cadence, frame boundaries, and presenter-controlled reading order.
+- Keep each slide as a strict, viewport-bounded frame. Default to a 16:9 container that fits within the active viewport without native browser scrolling.
 - Commit to a clear visual direction before implementation. Do not drift into a safe but generic deck-to-web template.
 - If the user provides internal reference decks, study them deck-wide before deciding style. Learn the page system, not just isolated visual tricks.
 - Treat image handling as data cleaning. Decide what to keep, crop, redraw, translate, or remove before restyling.
 - Preserve necessary logic relationships: deck flow, page flow, text-image mapping, diagram sequence, evidence-to-claim links, comparison structure, and step order.
+- Reconstruct slide layouts proportionally. Prefer CSS Grid or Flexbox ratios, named zones, and percentage or `fr` mappings over fixed-pixel absolute placement for major content blocks.
+- Scale type, padding, and gaps with the slide container. Prefer container-query units or other slide-relative units so typography shrinks and grows with the canvas instead of drifting independently.
+- On small screens, degrade like a presentation. First scale the whole slide, then trim decoration, and only reflow as a last resort while still keeping one slide inside one viewport.
 - Default to one source slide to one web slide. Split or merge slides only when fidelity would otherwise break, and explain the reason in `page-specs.md`.
 - Optimize the source language first. Add the bilingual layer only after the source copy is clear.
 - Reject visually anonymous output. The rebuilt deck should show deliberate composition, hierarchy, spacing rhythm, and typography instead of generic cardification.
@@ -26,6 +31,7 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Do not repeat orientation devices unnecessarily. If the cover, chrome, or navigation already explains the deck structure, a second full agenda page must add a new framing job or be removed.
 - On analytical pages, pick one primary proof device. If a diagram already carries the numbers and relationship, supporting text should interpret it, not restate it.
 - Leave only purposeful whitespace. Empty area should strengthen hierarchy, asymmetry, or pacing, not expose that the layout has no second anchor.
+- Avoid slide-internal scrolling and browser-level vertical scroll during playback. If a slide does not fit, redesign or degrade it; do not let it leak into a document model.
 
 ## Workspace Setup
 
@@ -116,6 +122,7 @@ Use this skill to turn an existing deck into a web presentation without losing i
 
 - Write `35-strategy/rebuild-strategy.md`.
 - Write `35-strategy/deck-design-system.md` as a deck-level design contract before implementation. Borrow the useful discipline of `DESIGN.md`: theme, palette, type hierarchy, shell rules, layout principles, depth, do/don't rules, responsive behavior, and agent-facing reminders.
+- In `deck-design-system.md`, explicitly define the slide boundary model, aspect ratio policy, scaling model, permitted sizing units, and mobile degradation order for the deck.
 - Judge the visual direction from the theme, occasion, speaker, and audience. Use [style-judgment.md](./references/style-judgment.md).
 - If reference decks were provided, also ground the strategy in `12-reference-study/reference-deck-notes.md`.
 - Choose the fidelity mode:
@@ -145,7 +152,9 @@ Use this skill to turn an existing deck into a web presentation without losing i
   - core takeaway
   - required assets
   - target layout
+  - proportional spatial map
   - bilingual strategy
+  - mobile degradation plan
   - animation intent
   - fidelity notes
 - Rewrite unclear source copy before adding translation.
@@ -175,6 +184,14 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Generate the deck only after `deck-brief.md`, `storyline.md`, `asset-register.md`, and `page-specs.md` are complete.
 - Preserve necessary text-image logic and diagram logic from the source.
 - Rebuild diagrams as semantic HTML, SVG, or CSS when possible.
+- Implement the deck as a viewport-bounded slide player:
+  - give the main slide canvas a strict aspect ratio, typically `16 / 9`
+  - constrain it to the viewport with `max-width` and `max-height` logic
+  - suppress native browser scrolling in playback mode
+  - hide overflow at the slide-container level rather than letting the page grow vertically
+- Translate original PPT coordinates into proportional layout zones. Use Grid, Flexbox, `fr`, `%`, and named regions before considering absolute positioning.
+- Use absolute positioning only for small, local overlays such as badges, arrows, or diagram labels when the parent zone is already stable.
+- Prefer container-query units such as `cqi`, `cqw`, or `cqh` for slide-synchronized typography and spacing. If container queries are unavailable, use a documented slide-relative fallback such as carefully chosen `vmin` tokens.
 - Provide:
   - a table of contents or slide index
   - direct slide jumps
@@ -184,16 +201,20 @@ Use this skill to turn an existing deck into a web presentation without losing i
   - PDF export path
   - reduced-motion handling
 - Keep animations purposeful. Use motion to reveal logic, sequence, emphasis, or transitions, not decoration.
+- On mobile, preserve presentation logic before web convenience. Scale the slide first, simplify non-essential chrome second, and only collapse multi-column layouts when readability would otherwise fail.
 - Avoid slide-internal scrolling.
 
 ### 9. Run QA and Repair
 
 - Visually inspect every generated slide.
 - Check for overlap, occlusion, clipping, inconsistent spacing, dead links, and broken navigation.
+- Check that each slide still fits as one bounded frame without native browser scrollbars appearing.
+- Check that aspect ratio, scale, and spacing feel synchronized instead of behaving like unrelated webpage modules.
 - Check for awkward heading wraps in both languages, especially on covers and opening analytical slides.
 - Check for repeated information across headline, body, stat chips, and diagram labels. Remove duplicated layers instead of polishing them.
 - Check for duplicate navigation or duplicated overview content in the opening sequence.
 - Check for dead zones: large blank regions that do not improve focus, pacing, or composition.
+- Check that mobile degradation still behaves like a slide deck. A reduced-size slide is preferable to a broken long-scroll document unless readability forces a controlled reflow.
 - Check logic as well as layout:
   - does each slide still say the same thing?
   - do images still correspond to the right claims?
@@ -212,6 +233,7 @@ Use this skill to turn an existing deck into a web presentation without losing i
 - Read [fidelity-checks.md](./references/fidelity-checks.md) when deciding what must stay logically faithful and what may change.
 - Read [reference-deck-learning.md](./references/reference-deck-learning.md) when the user provides internal reference decks.
 - Read [external-design-lessons.md](./references/external-design-lessons.md) when the user asks for broader craft improvement or when title hierarchy, redundancy, and page control are weak.
+- Read [web-presentation-rules.md](./references/web-presentation-rules.md) when implementing slide containers, scaling behavior, playback constraints, or mobile degradation for web-based presentations.
 
 ## Trigger Examples
 
