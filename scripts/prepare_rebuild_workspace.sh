@@ -24,6 +24,7 @@ fi
 
 mkdir -p "$WORKSPACE_DIR"/00-source
 mkdir -p "$WORKSPACE_DIR"/10-understanding
+mkdir -p "$WORKSPACE_DIR"/12-reference-study
 mkdir -p "$WORKSPACE_DIR"/20-logic
 mkdir -p "$WORKSPACE_DIR"/30-assets
 mkdir -p "$WORKSPACE_DIR"/35-strategy
@@ -50,6 +51,22 @@ cat > "$WORKSPACE_DIR/10-understanding/deck-brief.md" <<'EOF'
 ## Deck Summary
 
 ## Intended Audience Outcome
+EOF
+
+cat > "$WORKSPACE_DIR/12-reference-study/reference-deck-notes.md" <<'EOF'
+# Reference Deck Notes
+
+## Reference Files Reviewed
+
+## Deck-Shell Rules
+
+## Recurring Page Archetypes
+
+## Text-Image Rules Worth Copying
+
+## Anti-Patterns To Avoid
+
+## Transfer Plan For The Target Deck
 EOF
 
 cat > "$WORKSPACE_DIR/20-logic/storyline.md" <<'EOF'
@@ -107,6 +124,17 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.md" <<'EOF'
 - Animation Intent:
 - Bilingual Treatment:
 - Fidelity Notes:
+EOF
+
+cat > "$WORKSPACE_DIR/40-rebuild/pilot-selection.md" <<'EOF'
+# Pilot Selection
+
+## Chosen Slides
+
+| Source Slide | Archetype | Why It Is In The Pilot | What It Should Validate |
+| --- | --- | --- | --- |
+
+## Pilot Review Goal
 EOF
 
 cat > "$WORKSPACE_DIR/50-qa/qa-report.md" <<'EOF'

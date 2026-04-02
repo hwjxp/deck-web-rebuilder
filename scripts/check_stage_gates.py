@@ -8,10 +8,13 @@ import re
 
 REQUIRED_FILES = [
     Path("10-understanding/deck-brief.md"),
+    Path("12-reference-study/reference-deck-notes.md"),
     Path("20-logic/storyline.md"),
     Path("30-assets/asset-register.md"),
     Path("35-strategy/rebuild-strategy.md"),
+    Path("35-strategy/deck-design-system.md"),
     Path("40-rebuild/page-specs.md"),
+    Path("40-rebuild/pilot-selection.md"),
 ]
 
 

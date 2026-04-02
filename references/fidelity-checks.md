@@ -61,3 +61,6 @@ When reviewing a rebuilt slide, ask:
 - Is every necessary visual relationship still present?
 - Would a reader infer the same sequence, grouping, and emphasis as in the source?
 - Did the redesign improve clarity without changing the deck's actual claim?
+- Does the page establish a clear focal point and reading path within two seconds?
+- Does the typography create authority and hierarchy instead of merely fitting text on the page?
+- Does the composition feel authored and persuasive, or just clean and serviceable?
