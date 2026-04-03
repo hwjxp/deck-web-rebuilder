@@ -65,9 +65,33 @@ cat > "$WORKSPACE_DIR/00-source/visual-regions.json" <<'EOF'
           "group_id": "headline-group",
           "z_order_hint": 10,
           "confidence": "replace-me",
-          "slice_path": ""
+          "slice_path": "",
+          "relation_type": "none",
+          "primitive_count": 0,
+          "label_anchor_strategy": "none",
+          "must_show_full_frame": false,
+          "crop_tolerance": "none",
+          "alignment_group_id": ""
         }
       ]
+    }
+  ]
+}
+EOF
+
+cat > "$WORKSPACE_DIR/00-source/composition-graph.json" <<'EOF'
+{
+  "source_id": "replace-with-source-id",
+  "groups": [
+    {
+      "group_id": "slide-01-cover-shell",
+      "source_slide": 1,
+      "member_region_ids": ["slide-01-headline"],
+      "group_intent": "layout-scaffold",
+      "evidence_source": "both",
+      "confidence": "medium",
+      "rebuild_policy": "convert-to-css-layout",
+      "notes": "Template example: a cover shell can be a layout scaffold rather than a semantic object."
     }
   ]
 }
@@ -141,6 +165,63 @@ cat > "$WORKSPACE_DIR/20-logic/storyline.md" <<'EOF'
 ## Logic Breaks Or Redundancy
 EOF
 
+cat > "$WORKSPACE_DIR/20-logic/visual-structure-map.md" <<'EOF'
+# Visual Structure Map
+
+## Slide 1 - cover
+
+Visual structures detected:
+- layered composition at full frame: hero field plus title band
+
+Rebuild decisions:
+- layered composition -> live-text-layer
+- reason: keep the title searchable and bilingual while preserving the layered shell
+
+## Slide 2 - framing
+
+Visual structures detected:
+- semantic composite at center-left: replace with the actual diagram, overlap, or scaffold
+
+Rebuild decisions:
+- semantic composite -> redraw-as-SVG
+- reason: preserve the diagram grammar as one unit instead of exploding it into unrelated cards
+
+## Slide 3 - proof
+
+Visual structures detected:
+- transparent-border table at lower field: replace with the actual alignment scaffold or table decision
+
+Rebuild decisions:
+- transparent-border table -> css-layout
+- reason: alignment scaffolds should collapse into grid or flex, not become visible tables
+EOF
+
+cat > "$WORKSPACE_DIR/20-logic/authoring-intent.md" <<'EOF'
+# Authoring Intent
+
+## Structural Signals
+
+- note repeated use of semantic composite diagrams built from grouped shapes
+- note repeated layout scaffold patterns such as transparent-border tables or spacer groups
+- note which groups are content-bearing versus presentation chrome
+
+## Table Intent
+
+- list pseudo-table cases used only for alignment
+- list semantic table cases that must remain audience-visible tables
+
+## Connector And Layering Intent
+
+- note connector arrows whose direction carries sequence or causality
+- note z-order or reading-surface patterns that must remain layered in the web rebuild
+
+## Rebuild Implications
+
+- convert scaffolds into CSS layout rules
+- preserve semantic composites as one proof object
+- rebuild uncertain structures conservatively and record the confidence
+EOF
+
 cat > "$WORKSPACE_DIR/20-logic/confidence-report.md" <<'EOF'
 # Confidence Report
 
@@ -172,7 +253,11 @@ cat > "$WORKSPACE_DIR/30-assets/asset-lineage.json" <<'EOF'
       "semantic_role": "replace-me",
       "chosen_action": "keep",
       "redraw": false,
-      "confidence": "replace-me"
+      "confidence": "replace-me",
+      "fit_policy": "contain",
+      "must_show_full_frame": true,
+      "visible_area_min_pct": 100,
+      "focal_region_hint": ""
     }
   ]
 }
@@ -257,13 +342,21 @@ Copy the baseline structure from `references/deck-design-system-template.md`, th
 - language toggle:
 - deep links:
 
-## 6. Negative Space And Mobile
+## 6. Media Policy
+
+- default raster fit:
+- diagram fit:
+- board / contact-sheet fit:
+- allow safe crop only when:
+- gallery uniform height default:
+
+## 7. Negative Space And Mobile
 
 - blank ratio:
 - counterweight rule:
 - mobile degradation order:
 
-## 7. Do / Don't
+## 8. Do / Don't
 
 Do:
 
@@ -367,6 +460,13 @@ cat > "$WORKSPACE_DIR/35-strategy/deck-design-system.json" <<'EOF'
     "language_toggle": "sticky visible toggle in chrome",
     "deep_links": "slide ids use #slide-NN"
   },
+  "media_policy": {
+    "default_raster_fit": "contain",
+    "diagram_fit": "redraw",
+    "board_fit": "contain",
+    "allow_safe_crop_only_with_justification": true,
+    "gallery_uniform_height_default": "strict"
+  },
   "negative_space_policy": {
     "default_blank_ratio": "20-30%",
     "counterweight_rule": "every large blank field needs a visible anchor or opposing mass"
@@ -393,10 +493,167 @@ cat > "$WORKSPACE_DIR/35-strategy/deck-design-system.json" <<'EOF'
 }
 EOF
 
+cat > "$WORKSPACE_DIR/35-strategy/layout-rationale.md" <<'EOF'
+# Layout Rationale
+
+## Pattern Families
+
+- explain why each major slide family uses its chosen layout pattern
+
+## Rhythm
+
+- explain how the deck alternates dense and spacious slides
+
+## Title Discipline
+
+- note which slides preserve source one-line posture and which may use two lines
+
+## Media Discipline
+
+- note which slides require strict media alignment or full-frame containment
+
+## Anchor Strategy
+
+- explain the dominant visual anchor strategy across the pilot set
+EOF
+
+cat > "$WORKSPACE_DIR/35-strategy/layout-plan.json" <<'EOF'
+{
+  "slides": [
+    {
+      "slide_id": "slide-01",
+      "layout_pattern": "HERO-FULL",
+      "slide_role": "cover",
+      "visual_intent": "calm hero field with one-line opening claim",
+      "dominant_reading_path": "hero-to-note",
+      "dominant_visual_anchor": "hero-image",
+      "zone_skeleton": [
+        {
+          "zone_name": "HERO-ZONE",
+          "zone_purpose": "background field",
+          "content_rule": "one hero field only"
+        },
+        {
+          "zone_name": "TITLE-ZONE",
+          "zone_purpose": "headline band",
+          "content_rule": "one headline plus optional subtitle"
+        }
+      ],
+      "title_band_pct": 22,
+      "anchor_region_pct": 58,
+      "support_region_pct": 8,
+      "whitespace_reserve_pct": 12,
+      "max_body_blocks": 2,
+      "copy_budget_en": 40,
+      "copy_budget_zh": 36,
+      "group_preservation_rules": [
+        {
+          "group_id": "slide-01-headline-shell",
+          "policy": "convert-to-css-layout",
+          "reason": "Treat the cover shell as layout, not a literal exported box."
+        }
+      ],
+      "diagram_redraw_policy": "n/a",
+      "layout_confidence": "medium"
+    },
+    {
+      "slide_id": "slide-02",
+      "layout_pattern": "SPLIT-60-40",
+      "slide_role": "framing",
+      "visual_intent": "proof object on the wide side, interpretation on the rail",
+      "dominant_reading_path": "left-to-right",
+      "dominant_visual_anchor": "diagram",
+      "zone_skeleton": [
+        {
+          "zone_name": "VISUAL-ZONE",
+          "zone_purpose": "proof field",
+          "content_rule": "one dominant proof object"
+        },
+        {
+          "zone_name": "TITLE-ZONE",
+          "zone_purpose": "headline band",
+          "content_rule": "short title only"
+        },
+        {
+          "zone_name": "INSIGHT-ZONE",
+          "zone_purpose": "interpretation rail",
+          "content_rule": "2-4 lines of explanation"
+        }
+      ],
+      "title_band_pct": 18,
+      "anchor_region_pct": 50,
+      "support_region_pct": 22,
+      "whitespace_reserve_pct": 10,
+      "max_body_blocks": 3,
+      "copy_budget_en": 60,
+      "copy_budget_zh": 56,
+      "group_preservation_rules": [
+        {
+          "group_id": "replace-me",
+          "policy": "redraw-as-svg",
+          "reason": "Preserve semantic-composite diagram logic."
+        }
+      ],
+      "diagram_redraw_policy": "redraw-as-svg",
+      "layout_confidence": "medium"
+    },
+    {
+      "slide_id": "slide-03",
+      "layout_pattern": "HEADLINE-PROOF",
+      "slide_role": "proof",
+      "visual_intent": "headline up top, one proof object below",
+      "dominant_reading_path": "title-to-proof",
+      "dominant_visual_anchor": "proof-strip",
+      "zone_skeleton": [
+        {
+          "zone_name": "TITLE-ZONE",
+          "zone_purpose": "claim band",
+          "content_rule": "one claim only"
+        },
+        {
+          "zone_name": "EVIDENCE-ZONE",
+          "zone_purpose": "proof object",
+          "content_rule": "one primary proof object"
+        },
+        {
+          "zone_name": "ANNOTATION-ZONE",
+          "zone_purpose": "support note",
+          "content_rule": "short interpretation only"
+        }
+      ],
+      "title_band_pct": 28,
+      "anchor_region_pct": 50,
+      "support_region_pct": 14,
+      "whitespace_reserve_pct": 8,
+      "max_body_blocks": 2,
+      "copy_budget_en": 42,
+      "copy_budget_zh": 40,
+      "group_preservation_rules": [
+        {
+          "group_id": "replace-me",
+          "policy": "convert-to-css-layout",
+          "reason": "Collapse alignment scaffolds instead of showing them literally."
+        }
+      ],
+      "diagram_redraw_policy": "n/a",
+      "layout_confidence": "medium"
+    }
+  ]
+}
+EOF
+
+cat > "$WORKSPACE_DIR/40-rebuild/layout-spine.md" <<'EOF'
+# Layout Spine
+
+slide-01 | HERO-FULL      | cover    | calm hero field with one-line opening claim
+slide-02 | SPLIT-60-40    | framing  | proof object on the wide side, interpretation on the rail
+slide-03 | HEADLINE-PROOF | proof    | headline above one primary proof object
+EOF
+
 cat > "$WORKSPACE_DIR/40-rebuild/page-specs.md" <<'EOF'
 # Page Specs
 
-Use `references/layout-patterns.md`, `references/page-archetypes.md`, and `references/typography-rules.md`. Do not invent new layout vocabulary.
+Use `references/layout-patterns.md`, `references/layout-first-method.md`, `references/page-archetypes.md`, and `references/typography-rules.md`. Do not invent new layout vocabulary. Write zones first, then fill copy.
 
 ## Deck-Level Settings
 
@@ -410,19 +667,30 @@ Use `references/layout-patterns.md`, `references/page-archetypes.md`, and `refer
 - Destination Slide ID: `slide-01`
 - Slide Role:
 - Archetype:
+- Layout Pattern:
+- Zone Skeleton:
 - Core Takeaway:
 - Source Of Truth:
 - Confidence Level:
+- Dominant Reading Path:
+- Layout Hypothesis:
 - Title Posture:
+- Source Title Line-Count Strategy:
 - Required Copy Blocks:
 - Required Assets:
-- Target Layout Pattern:
 - Proportional Spatial Map:
+- Whitespace Reserve:
+- Copy Budget:
 - Dominant Visual Anchor:
+- Group Preservation Rules:
 - Primary Proof Device:
+- Diagram Redraw Policy:
+- Diagram Contract:
+- Media Layout Contract:
 - Bilingual Treatment:
 - Mobile Degradation Plan:
 - Animation Intent:
+- Render Audit Targets:
 - Forbidden Patterns:
 - Fidelity Notes:
 
@@ -433,19 +701,30 @@ Use `references/layout-patterns.md`, `references/page-archetypes.md`, and `refer
 - Destination Slide ID: `slide-02`
 - Slide Role:
 - Archetype:
+- Layout Pattern:
+- Zone Skeleton:
 - Core Takeaway:
 - Source Of Truth:
 - Confidence Level:
+- Dominant Reading Path:
+- Layout Hypothesis:
 - Title Posture:
+- Source Title Line-Count Strategy:
 - Required Copy Blocks:
 - Required Assets:
-- Target Layout Pattern:
 - Proportional Spatial Map:
+- Whitespace Reserve:
+- Copy Budget:
 - Dominant Visual Anchor:
+- Group Preservation Rules:
 - Primary Proof Device:
+- Diagram Redraw Policy:
+- Diagram Contract:
+- Media Layout Contract:
 - Bilingual Treatment:
 - Mobile Degradation Plan:
 - Animation Intent:
+- Render Audit Targets:
 - Forbidden Patterns:
 - Fidelity Notes:
 
@@ -456,19 +735,30 @@ Use `references/layout-patterns.md`, `references/page-archetypes.md`, and `refer
 - Destination Slide ID: `slide-03`
 - Slide Role:
 - Archetype:
+- Layout Pattern:
+- Zone Skeleton:
 - Core Takeaway:
 - Source Of Truth:
 - Confidence Level:
+- Dominant Reading Path:
+- Layout Hypothesis:
 - Title Posture:
+- Source Title Line-Count Strategy:
 - Required Copy Blocks:
 - Required Assets:
-- Target Layout Pattern:
 - Proportional Spatial Map:
+- Whitespace Reserve:
+- Copy Budget:
 - Dominant Visual Anchor:
+- Group Preservation Rules:
 - Primary Proof Device:
+- Diagram Redraw Policy:
+- Diagram Contract:
+- Media Layout Contract:
 - Bilingual Treatment:
 - Mobile Degradation Plan:
 - Animation Intent:
+- Render Audit Targets:
 - Forbidden Patterns:
 - Fidelity Notes:
 EOF
@@ -502,6 +792,8 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.json" <<'EOF'
         "posture": "single-line",
         "prefer_no_wrap": true,
         "max_lines": 1,
+        "source_line_count": 1,
+        "line_count_strategy": "preserve-source",
         "preferred_width_ch": 28,
         "min_container_ratio": 0.62,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -512,16 +804,63 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.json" <<'EOF'
           "asset_id": "cover-hero",
           "role": "hero-image",
           "action": "keep",
+          "fit_policy": "contain",
+          "must_show_full_frame": true,
+          "visible_area_min_pct": 100,
           "notes": "Replace with the chosen hero asset or tonal field."
         }
       ],
+      "layout_plan": {
+        "dominant_reading_path": "hero-to-note",
+        "layout_hypothesis": "Keep the cover as a calm hero field with one dominant title band and no extra agenda row.",
+        "zone_skeleton": [
+          {
+            "zone_name": "HERO-ZONE",
+            "zone_purpose": "background field",
+            "content_rule": "one hero field only"
+          },
+          {
+            "zone_name": "TITLE-ZONE",
+            "zone_purpose": "headline band",
+            "content_rule": "one headline plus optional subtitle"
+          }
+        ],
+        "title_band_pct": 22,
+        "anchor_region_pct": 58,
+        "support_region_pct": 8,
+        "whitespace_reserve_pct": 12,
+        "max_body_blocks": 2,
+        "copy_budget_en": 40,
+        "copy_budget_zh": 36,
+        "group_preservation_rules": [
+          {
+            "group_id": "slide-01-headline-shell",
+            "policy": "convert-to-css-layout",
+            "reason": "Use CSS layout for the cover shell instead of a literal exported box."
+          }
+        ],
+        "diagram_redraw_policy": "n/a",
+        "layout_confidence": "medium"
+      },
       "proportional_spatial_map": {
-        "title_region_pct": 68,
-        "anchor_region_pct": 72,
-        "support_region_pct": 12,
+        "title_region_pct": 22,
+        "anchor_region_pct": 58,
+        "support_region_pct": 8,
         "notes": "Cover shell only; no extra agenda row."
       },
       "primary_proof_device": "hero-image",
+      "diagram_contract": {
+        "relation_type": "none",
+        "primitive_count": 0,
+        "must_preserve_overlap": false,
+        "label_anchor_strategy": "none"
+      },
+      "media_layout_contract": {
+        "default_fit_policy": "contain",
+        "uniform_media_height": "n/a",
+        "allow_occlusion": false,
+        "clip_tolerance": "none"
+      },
       "bilingual_mode": "toggle",
       "mobile_degradation_plan": {
         "order": ["scale-slide", "trim-decoration", "tighten-spacing", "rewrite-copy"],
@@ -531,6 +870,14 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.json" <<'EOF'
       "negative_space_strategy": "Reserve a calm field around the title and hold it with one large hero mass.",
       "counterweight_strategy": "Use the hero field or tonal block as the opposing weight.",
       "animation_intent": ["section-transition"],
+      "render_audit_targets": {
+        "verify_title_lines": true,
+        "verify_overlap": true,
+        "verify_clipping": true,
+        "verify_occlusion": true,
+        "verify_media_alignment": false,
+        "verify_diagram_semantics": false
+      },
       "forbidden_patterns": ["duplicate-agenda", "narrow-title-column", "dead-zone"]
     },
     {
@@ -555,6 +902,9 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.json" <<'EOF'
         "posture": "balanced-two-line",
         "prefer_no_wrap": false,
         "max_lines": 2,
+        "source_line_count": 2,
+        "line_count_strategy": "fit-deck-system",
+        "wrap_justification": "Allow one additional line only if the reframed title cannot stay clear at deck scale.",
         "preferred_width_ch": 30,
         "min_container_ratio": 0.62,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -584,16 +934,68 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.json" <<'EOF'
           "asset_id": "logic-diagram-01",
           "role": "diagram",
           "action": "redraw",
+          "fit_policy": "redraw",
+          "must_show_full_frame": true,
+          "visible_area_min_pct": 100,
           "notes": "Main proof object for the framing page."
         }
       ],
+      "layout_plan": {
+        "dominant_reading_path": "left-to-right",
+        "layout_hypothesis": "Use a wide proof field plus a note rail so the argument reads from diagram to interpretation.",
+        "zone_skeleton": [
+          {
+            "zone_name": "VISUAL-ZONE",
+            "zone_purpose": "proof field",
+            "content_rule": "one dominant proof object"
+          },
+          {
+            "zone_name": "TITLE-ZONE",
+            "zone_purpose": "headline band",
+            "content_rule": "short title only"
+          },
+          {
+            "zone_name": "INSIGHT-ZONE",
+            "zone_purpose": "interpretation rail",
+            "content_rule": "2-4 lines of explanation"
+          }
+        ],
+        "title_band_pct": 18,
+        "anchor_region_pct": 50,
+        "support_region_pct": 22,
+        "whitespace_reserve_pct": 10,
+        "max_body_blocks": 3,
+        "copy_budget_en": 60,
+        "copy_budget_zh": 56,
+        "group_preservation_rules": [
+          {
+            "group_id": "replace-me",
+            "policy": "redraw-as-svg",
+            "reason": "Keep semantic-composite diagram logic as one unit."
+          }
+        ],
+      "diagram_redraw_policy": "redraw-as-svg",
+        "layout_confidence": "medium"
+      },
       "proportional_spatial_map": {
-        "title_region_pct": 62,
-        "anchor_region_pct": 64,
-        "support_region_pct": 32,
+        "title_region_pct": 18,
+        "anchor_region_pct": 50,
+        "support_region_pct": 22,
         "notes": "Main proof on the wide side, interpretation on the narrow side."
       },
       "primary_proof_device": "diagram",
+      "diagram_contract": {
+        "relation_type": "overlap",
+        "primitive_count": 2,
+        "must_preserve_overlap": true,
+        "label_anchor_strategy": "outside-with-leader"
+      },
+      "media_layout_contract": {
+        "default_fit_policy": "redraw",
+        "uniform_media_height": "n/a",
+        "allow_occlusion": false,
+        "clip_tolerance": "none"
+      },
       "bilingual_mode": "toggle",
       "mobile_degradation_plan": {
         "order": ["scale-slide", "trim-decoration", "tighten-spacing", "reflow-layout"],
@@ -603,7 +1005,15 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.json" <<'EOF'
       "negative_space_strategy": "Keep breathing room around the diagram rather than filling the panel with extra cards.",
       "counterweight_strategy": "Let the side insight panel hold the opposite side of the composition.",
       "animation_intent": ["focus-shift", "proof-build"],
-      "forbidden_patterns": ["duplicate-agenda", "narrow-title-column", "double-proof-layer", "generic-cardification"]
+      "render_audit_targets": {
+        "verify_title_lines": true,
+        "verify_overlap": true,
+        "verify_clipping": true,
+        "verify_occlusion": true,
+        "verify_media_alignment": false,
+        "verify_diagram_semantics": true
+      },
+      "forbidden_patterns": ["duplicate-agenda", "narrow-title-column", "double-proof-layer", "generic-cardification", "diagram-semantic-drift"]
     },
     {
       "slide_id": "slide-03",
@@ -627,6 +1037,8 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.json" <<'EOF'
         "posture": "single-line",
         "prefer_no_wrap": true,
         "max_lines": 1,
+        "source_line_count": 1,
+        "line_count_strategy": "preserve-source",
         "preferred_width_ch": 28,
         "min_container_ratio": 0.6,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -656,16 +1068,68 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.json" <<'EOF'
           "asset_id": "proof-strip-01",
           "role": "chart",
           "action": "redraw",
+          "fit_policy": "redraw",
+          "must_show_full_frame": true,
+          "visible_area_min_pct": 100,
           "notes": "This is the single primary proof device on the page."
         }
       ],
+      "layout_plan": {
+        "dominant_reading_path": "title-to-proof",
+        "layout_hypothesis": "Use a headline band over one primary proof device and keep support notes secondary.",
+        "zone_skeleton": [
+          {
+            "zone_name": "TITLE-ZONE",
+            "zone_purpose": "claim band",
+            "content_rule": "one claim only"
+          },
+          {
+            "zone_name": "EVIDENCE-ZONE",
+            "zone_purpose": "proof object",
+            "content_rule": "one primary proof object"
+          },
+          {
+            "zone_name": "ANNOTATION-ZONE",
+            "zone_purpose": "support note",
+            "content_rule": "short interpretation only"
+          }
+        ],
+        "title_band_pct": 28,
+        "anchor_region_pct": 50,
+        "support_region_pct": 14,
+        "whitespace_reserve_pct": 8,
+        "max_body_blocks": 2,
+        "copy_budget_en": 42,
+        "copy_budget_zh": 40,
+        "group_preservation_rules": [
+          {
+            "group_id": "replace-me",
+            "policy": "convert-to-css-layout",
+            "reason": "Collapse alignment scaffolds instead of showing them literally."
+          }
+        ],
+        "diagram_redraw_policy": "n/a",
+        "layout_confidence": "medium"
+      },
       "proportional_spatial_map": {
-        "title_region_pct": 60,
-        "anchor_region_pct": 58,
-        "support_region_pct": 24,
+        "title_region_pct": 28,
+        "anchor_region_pct": 50,
+        "support_region_pct": 14,
         "notes": "Headline above, proof below, note tucked into the same composition."
       },
       "primary_proof_device": "proof-strip",
+      "diagram_contract": {
+        "relation_type": "none",
+        "primitive_count": 0,
+        "must_preserve_overlap": false,
+        "label_anchor_strategy": "none"
+      },
+      "media_layout_contract": {
+        "default_fit_policy": "redraw",
+        "uniform_media_height": "strict",
+        "allow_occlusion": false,
+        "clip_tolerance": "none"
+      },
       "bilingual_mode": "toggle",
       "mobile_degradation_plan": {
         "order": ["scale-slide", "trim-decoration", "tighten-spacing", "rewrite-copy"],
@@ -675,7 +1139,15 @@ cat > "$WORKSPACE_DIR/40-rebuild/page-specs.json" <<'EOF'
       "negative_space_strategy": "Use whitespace to isolate the proof band and strengthen scanability.",
       "counterweight_strategy": "Pair the headline block with the proof strip so the page still feels held.",
       "animation_intent": ["reveal-sequence", "proof-build"],
-      "forbidden_patterns": ["narrow-title-column", "double-proof-layer", "floating-card-row", "dead-zone"]
+      "render_audit_targets": {
+        "verify_title_lines": true,
+        "verify_overlap": true,
+        "verify_clipping": true,
+        "verify_occlusion": true,
+        "verify_media_alignment": true,
+        "verify_diagram_semantics": false
+      },
+      "forbidden_patterns": ["narrow-title-column", "double-proof-layer", "floating-card-row", "dead-zone", "media-height-drift"]
     }
   ]
 }
@@ -733,12 +1205,15 @@ Use this before calling the pilot or full deck finished.
 - Does the page still feel held together when I squint?
 - Is whitespace purposeful, with a visible counterweight?
 - Does the page avoid floating card rows and unsupported dead zones?
+- Are any images clipping meaningful content at the edges or bottom?
+- If there is a media strip or grid, are peer media windows aligned in height?
 
 ## Logic
 
 - Is the proof device singular, or have headline, chart, and chips started repeating the same claim?
 - If the page is a timeline, matrix, or framework, does the layout still preserve that logic?
 - Are image and text still tightly paired?
+- If the source used overlap, matrix, or lineup logic, did the rebuild preserve that same grammar?
 
 ## Bilingual
 
@@ -751,6 +1226,58 @@ Use this before calling the pilot or full deck finished.
 - Does the slide fit within one viewport without native browser scroll?
 - Do deep links, keyboard navigation, and reduced motion still work?
 - Does print or PDF export hold the same page boundaries?
+EOF
+
+cat > "$WORKSPACE_DIR/50-qa/render-audit.json" <<'EOF'
+{
+  "slides": [
+    {
+      "slide_id": "slide-01",
+      "checked_languages": ["zh", "en"],
+      "title_line_counts": {
+        "zh": 1,
+        "en": 1
+      },
+      "title_wrap_status": "pass",
+      "overlap_status": "pass",
+      "clipping_status": "pass",
+      "occlusion_status": "pass",
+      "media_uniformity_status": "n/a",
+      "diagram_semantics_status": "n/a",
+      "notes": ""
+    },
+    {
+      "slide_id": "slide-02",
+      "checked_languages": ["zh", "en"],
+      "title_line_counts": {
+        "zh": 0,
+        "en": 0
+      },
+      "title_wrap_status": "n/a",
+      "overlap_status": "n/a",
+      "clipping_status": "n/a",
+      "occlusion_status": "n/a",
+      "media_uniformity_status": "n/a",
+      "diagram_semantics_status": "n/a",
+      "notes": ""
+    },
+    {
+      "slide_id": "slide-03",
+      "checked_languages": ["zh", "en"],
+      "title_line_counts": {
+        "zh": 0,
+        "en": 0
+      },
+      "title_wrap_status": "n/a",
+      "overlap_status": "n/a",
+      "clipping_status": "n/a",
+      "occlusion_status": "n/a",
+      "media_uniformity_status": "n/a",
+      "diagram_semantics_status": "n/a",
+      "notes": ""
+    }
+  ]
+}
 EOF
 
 echo "Workspace prepared at: $WORKSPACE_DIR"

@@ -46,6 +46,10 @@ Check these relation types explicitly:
 - comparison A to comparison B
 - container to nested item
 - chart label to chart mark
+- shape-drawn composite to unified visual
+- transparent-border table to CSS layout scaffold
+- layered composition to live text-over-image structure
+- connector arrow to its original directionality and semantic role
 
 ## Diagram Rules
 
@@ -53,9 +57,18 @@ When redrawing diagrams:
 
 - describe the logic in words before drawing
 - keep directionality intact
+- preserve the diagram grammar itself: overlap stays overlap, matrices stay matrices, grouped rows stay grouped rows
+- do not silently change the number of primary proof primitives unless the simplification is documented
 - keep labels attached to the correct node or edge
 - preserve grouping and emphasis
 - simplify visuals only after confirming the simplification does not erase meaning
+
+## Image Fit Rules
+
+- if the source visibly shows a full artwork, board, character sheet, or contact sheet, default to preserving the full frame
+- use cropping only when the crop is justified and the focal subject remains intact
+- never let CSS defaults crop away meaningful content from tables, sheets, or lineup boards
+- when the source compares peer visuals side by side, keep their media windows consistent enough that the comparison still feels intentional
 
 ## Bilingual Rules
 
@@ -80,3 +93,6 @@ When reviewing a rebuilt slide, ask:
 - Looking only at size and weight, can you tell title, subtitle, and body apart within two seconds?
 - When switching languages, do the corresponding blocks stay structurally aligned instead of causing a major jump in page balance?
 - If part of the page was reconstructed from incomplete evidence, is that redraw still conservative enough to avoid inventing a new claim?
+- Does a diagram still use the same proof grammar as the source, or was an overlap, matrix, or sequence flattened into a different structure?
+- Are all image-led proof objects still fully visible where the source showed them fully, without bottom clipping or edge loss?
+- On comparison rows, strips, or sample grids, do peer media still align in height and baseline so the page reads as one system?

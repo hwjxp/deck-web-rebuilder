@@ -23,18 +23,23 @@ When internal reference decks are available, study them before choosing a visual
 - Do not work slide by slide from the start. First understand the deck-level message, audience, occasion, and persuasion goal.
 - Detect the input mode first: `polish`, `reverse-engineer`, or `editorial-compose`.
 - Work top-down: `storyline -> layout -> content`.
+- Write the layout spine before writing any copy. Layout zones define the content budget. Copy must fit the zone; the zone must never expand to fit the copy.
 - Build a visual parse even when source object data exists. Rendered pages are the ground truth for composition, grouping, and emphasis.
+- Parse authoring intent, not just visible regions. Distinguish semantic composites, layout scaffolds, pseudo-tables, semantic tables, and presentation chrome before rebuilding.
 - Keep an explicit source-of-truth order: source object layer > rendered slide/page > OCR text > inference.
 - Track uncertainty. If diagram logic, grouping, or text-image mapping is only partly inferred, mark the confidence before redesigning.
+- Preserve source diagram grammar. If the source uses overlap, containment, sequence, matrix, or nested grouping, encode that relation explicitly before redrawing.
 - Treat the output as a browser-based slide deck, not a normal web page. Preserve slide cadence, frame boundaries, and presenter-controlled reading order.
 - Keep each slide as a strict, viewport-bounded frame. Default to a 16:9 container that fits within the active viewport without native browser scrolling.
 - Commit to a clear visual direction before implementation. Do not drift into a safe but generic deck-to-web template.
 - If the user provides internal reference decks, study them deck-wide before deciding style. Learn the page system, not just isolated visual tricks.
 - Treat image handling as data cleaning. Decide what to keep, crop, redraw, translate, or remove before restyling.
+- Do not let implementation defaults decide cropping. Each image-bearing slide should explicitly choose between `contain`, `safe-crop`, `cover`, or redraw, and justify any crop that hides source content.
 - Preserve necessary logic relationships: deck flow, page flow, text-image mapping, diagram sequence, evidence-to-claim links, comparison structure, and step order.
 - Preserve or reconstruct build order when the source implies sequential reveals. Do not flatten a staged argument into one simultaneous dump.
 - Keep asset lineage. Every extracted or sliced asset should stay traceable to a source page and region.
 - Reconstruct slide layouts proportionally. Prefer CSS Grid or Flexbox ratios, named zones, and percentage or `fr` mappings over fixed-pixel absolute placement for major content blocks.
+- Choose layout patterns only from [layout-patterns.md](./references/layout-patterns.md). Do not invent ad hoc structures during implementation.
 - Scale type, padding, and gaps with the slide container. Prefer container-query units or other slide-relative units so typography shrinks and grows with the canvas instead of drifting independently.
 - On small screens, degrade like a presentation. First scale the whole slide, then trim decoration, and only reflow as a last resort while still keeping one slide inside one viewport.
 - Default to one source slide to one web slide. Split or merge slides only when fidelity would otherwise break, and explain the reason in `page-specs.md`.
@@ -43,6 +48,7 @@ When internal reference decks are available, study them before choosing a visual
 - Do not expand to the whole deck immediately. Build a five-slide representative pilot first unless the user explicitly asks to skip this gate.
 - Default to a slide-spanning headline band. Most body slides should prefer a single-line title if it fits naturally; do not force wrapping just to manufacture drama.
 - Do not force narrow title columns just to manufacture drama. Title breaks must feel intentional in both English and Chinese, and should survive language toggle without awkward wrapping.
+- When the source divider or framing slide uses a single-line headline, preserve that line-count intent unless there is a documented reason not to.
 - Do not repeat orientation devices unnecessarily. If the cover, chrome, or navigation already explains the deck structure, a second full agenda page must add a new framing job or be removed.
 - On analytical pages, pick one primary proof device. If a diagram already carries the numbers and relationship, supporting text should interpret it, not restate it.
 - Leave only purposeful whitespace. Empty area should strengthen hierarchy, asymmetry, or pacing, not expose that the layout has no second anchor.
@@ -52,13 +58,13 @@ When internal reference decks are available, study them before choosing a visual
 
 - Create a task-local workspace before analysis. Prefer `scripts/prepare_rebuild_workspace.sh <input-file> [workspace-dir]`.
 - Keep these folders:
-  - `00-source/` original file, exported PDF, extracted text, slide screenshots, input profile, visual region map
+  - `00-source/` original file, exported PDF, extracted text, slide screenshots, input profile, visual region map, composition graph
   - `10-understanding/` deck brief and audience/context notes
   - `12-reference-study/` notes on any reference decks and extracted layout/system rules
-  - `20-logic/` storyline, slide-role mapping, and confidence report
+  - `20-logic/` visual structure map, storyline, authoring intent, slide-role mapping, and confidence report
   - `30-assets/` asset register, lineage, extracted images, and sliced regions
-  - `35-strategy/` rebuild strategy and style direction
-  - `40-rebuild/` page specs and generated web deck
+  - `35-strategy/` rebuild strategy, style direction, layout plan, and layout rationale
+  - `40-rebuild/` layout spine, page specs, and generated web deck
   - `50-qa/` screenshots, comparison notes, and QA report
 - Keep a stable artifact trail. Each later stage should inherit from the previous stage instead of re-reading the whole deck from scratch.
 
@@ -111,6 +117,7 @@ When internal reference decks are available, study them before choosing a visual
 
 - Render every slide or source page into a full-frame visual reference.
 - Write `00-source/visual-regions.json`.
+- Write `00-source/composition-graph.json`.
 - For each page, segment and classify at least:
   - headline band
   - main proof zone
@@ -119,8 +126,19 @@ When internal reference decks are available, study them before choosing a visual
   - diagrams or charts
   - decorative or removable chrome
   - likely navigation or meta elements
+- For every diagram-like region, also record its visual grammar:
+  - relation type such as overlap, matrix, sequence, hierarchy, or gallery
+  - primitive count such as circles, nodes, rows, or columns
+  - label-anchor behavior
+- For every photo, screenshot, board, or image strip, record fit-critical metadata:
+  - whether the full frame must remain visible
+  - whether crop is allowed
+  - likely focal subject or focal region
+  - whether neighboring media are meant to align in height or baseline
 - If the source is PDF- or screenshot-only, slice reusable visual regions into `30-assets/slices/` and record them in `30-assets/asset-lineage.json`.
 - Record likely grouping, overlap, z-order, and dominant reading path from the rendered page, not only from extracted text.
+- Decode authoring intent as well as audience-visible regions. Use [ppt-structure-decoder.md](./references/ppt-structure-decoder.md) to classify groups as semantic composites, layout scaffolds, content-bearing blocks, or presentation chrome.
+- For table-like structures, decide whether they are semantic tables or invisible layout scaffolds before rebuilding them.
 - Note uncertain regions or relationships instead of pretending the parse is complete. Low-confidence diagrams or chart regions must be called out before redesign begins.
 - Use [visual-parsing-playbook.md](./references/visual-parsing-playbook.md) when deciding how to combine object extraction, OCR, layout analysis, and slicing.
 
@@ -128,6 +146,7 @@ When internal reference decks are available, study them before choosing a visual
 
 - Read every slide, including cover, section dividers, appendix, and notes.
 - Inspect full-slide images and the visual region map, not just extracted text.
+- For each slide, decode its visual structures using `references/ppt-structure-decoder.md`. Record findings in `20-logic/visual-structure-map.md` before proceeding to Step 3.
 - Answer these questions before doing any redesign work:
   - What is the deck about?
   - Who is speaking?
@@ -136,12 +155,20 @@ When internal reference decks are available, study them before choosing a visual
 - Write `10-understanding/deck-brief.md`.
 - Do not start HTML, CSS, or copy rewriting yet.
 
-### 3. Model the Logic
+### 3. Model the Logic and Authoring Intent
 
 - Write `20-logic/storyline.md`.
+- Write `20-logic/visual-structure-map.md`.
+- Write `20-logic/authoring-intent.md`.
 - Write `20-logic/confidence-report.md`.
 - Identify the deck-level arc: setup, tension, diagnosis, solution, proof, ask, close.
 - For each slide, note its role: opener, context, problem, comparison, framework, process, case study, evidence, transition, appendix, or close.
+- Distinguish what the audience sees from how the author built it:
+  - shape-drawn semantic composites
+  - format-only groups
+  - pseudo-tables used for alignment
+  - true data tables
+  - presentation chrome versus content-bearing blocks
 - Map relationships:
   - text to image
   - image to image
@@ -151,6 +178,7 @@ When internal reference decks are available, study them before choosing a visual
   - hierarchy and grouping
 - Flag broken logic in the source deck, but do not fix it visually yet.
 - If a chart or diagram carries logic, describe that logic in words before redrawing it.
+- If a group behaves as one semantic diagram node or custom shape, preserve or redraw it as one unit instead of exploding it into independent DOM fragments.
 - For each critical relationship, record a confidence level:
   - `high` when confirmed by source structure and rendered page
   - `medium` when confirmed visually but not structurally
@@ -159,15 +187,21 @@ When internal reference decks are available, study them before choosing a visual
 
 ### 4. Clean and Classify Assets
 
-- Build `30-assets/asset-register.md`.
+- Build `30-assets/asset-register.md`. Asset decisions must be grounded in `20-logic/visual-structure-map.md`; do not classify an asset without first knowing which structure type it belongs to.
 - Build `30-assets/asset-lineage.json`.
 - For each asset decide `keep`, `crop`, `redraw`, `translate`, or `remove`.
 - Preserve asset lineage for every extracted visual: source page, region ID, derived file path, semantic role, chosen action, and confidence.
+- Add a fit policy for every retained visual asset:
+  - `contain` when the full source frame or board must stay visible
+  - `safe-crop` only when the crop is intentional and the focal subject remains intact
+  - `cover` only when the source already behaves like a crop-safe background field
+  - `redraw` when the visual is really a diagram, matrix, or structured board
 - Separate:
   - photos or illustrations that should stay as images
   - product screenshots or UI captures that may need cropping or annotation
   - diagrams, flows, and architectures that should be redrawn as structured web graphics
   - charts and tables that should be recreated from data or re-encoded visually
+  - pseudo-tables and invisible alignment scaffolds that should collapse to CSS grid or flex layout
   - decorative icons, fillers, stock UI chrome, and noise that can be removed
 - Distinguish implementation targets:
   - simple vector-like marks, logos, and icons for SVG or CSS recreation
@@ -183,6 +217,7 @@ When internal reference decks are available, study them before choosing a visual
 - Mirror the same rules into `35-strategy/deck-design-system.json` and validate it against `schemas/deck-design-system.schema.json`.
 - In `deck-design-system.md`, explicitly define the slide boundary model, aspect ratio policy, scaling model, permitted sizing units, and mobile degradation order for the deck.
 - Explicitly define the title-band system for the deck: height, alignment, preferred title posture, no-wrap preference, and when a two-line title is allowed.
+- Explicitly define the deck's media-fit defaults: what types of assets must default to `contain`, when `safe-crop` is allowed, and how sample rows keep consistent media windows.
 - Judge the visual direction from the theme, occasion, speaker, and audience. Use [style-judgment.md](./references/style-judgment.md).
 - If reference decks were provided, also ground the strategy in `12-reference-study/reference-deck-notes.md`.
 - Choose the fidelity mode:
@@ -197,33 +232,52 @@ When internal reference decks are available, study them before choosing a visual
 - Treat the design contract as executable guidance, not mood-board prose. If it is too vague for another agent to follow, tighten it before coding.
 - Pull typography, title-fit, and bilingual limits from [typography-rules.md](./references/typography-rules.md) instead of inventing them per deck.
 
-### 6. Write the Storyline Before Layout
+### 6. Write the Layout Spine, Then Fill Content
 
-- Turn the logic model into `40-rebuild/page-specs.md` and `40-rebuild/page-specs.json`.
-- Work top-down:
-  1. define the deck storyline
-  2. define each slide's job
-  3. define the target layout pattern for each slide
-  4. fill in refined copy and visuals
+- Write `40-rebuild/layout-spine.md` first, using [layout-spine-template.md](./references/layout-spine-template.md).
+- Write `35-strategy/layout-plan.json` and `35-strategy/layout-rationale.md` before writing final page specs.
+- Turn the logic model into `40-rebuild/page-specs.md` and `40-rebuild/page-specs.json` only after the layout spine and layout plan are complete.
+- Work in strict sequence using [layout-first-method.md](./references/layout-first-method.md):
+  1. write `40-rebuild/layout-spine.md` with one allowed layout pattern per slide
+  2. validate the deck rhythm before touching page specs
+  3. write the zone skeleton for each slide
+  4. allocate title, anchor, support, and whitespace budgets
+  5. fill copy into zones
+  6. assign assets into those zones
+- Never fill content and plan layout simultaneously. If a layout starts changing to fit the copy you just wrote, stop and cut or rewrite the copy instead.
 - For each slide, decide the dominant reading path and visual anchor before placing detailed content.
 - Decide title posture explicitly: single-line, balanced two-line, or intentional stack. Default to a slide-level headline band that spans the main content width. Never accept accidental newspaper-style wrapping caused by an overly narrow text box.
+- For non-editorial source decks, record the source title line count and whether the rebuild must preserve it.
 - Keep one page spec per slide with:
   - source slide number
   - input mode
   - slide role
   - archetype
+  - layout pattern (from `references/layout-patterns.md`; no ad hoc values)
+  - zone skeleton
   - core takeaway
   - source of truth
   - confidence level
+  - dominant reading path
+  - layout hypothesis
   - required assets
   - target layout
   - proportional spatial map
+  - whitespace reserve
+  - copy budget
   - dominant visual anchor
   - title posture
+  - source title line-count strategy
   - primary proof device
+  - diagram contract
+  - group preservation rules
+  - diagram redraw policy
+  - media layout contract
   - bilingual strategy
   - mobile degradation plan
   - animation intent
+  - render audit targets
+  - layout confidence
   - fidelity notes
 - Use layout pattern names only from [layout-patterns.md](./references/layout-patterns.md).
 - Use archetype names only from [page-archetypes.md](./references/page-archetypes.md) and, when helpful, start from `templates/archetypes/*.yml`.
@@ -262,11 +316,18 @@ When internal reference decks are available, study them before choosing a visual
   - suppress native browser scrolling in playback mode
   - hide overflow at the slide-container level rather than letting the page grow vertically
 - Translate original PPT coordinates into proportional layout zones. Use Grid, Flexbox, `fr`, `%`, and named regions before considering absolute positioning.
+- For complex internal slide structures, prefer CSS Grid with `grid-template-areas` so the layout skeleton is explicit and less likely to drift.
 - Use absolute positioning only for small, local overlays such as badges, arrows, or diagram labels when the parent zone is already stable.
 - When elements overlap, assign explicit `z-index` values instead of relying on DOM order alone.
+- If a grouped PPT structure is a semantic composite, rebuild it as one logical visual unit, typically SVG. Do not explode it into a stack of unrelated boxes.
+- If a grouped PPT structure is only a layout scaffold, collapse it into semantic HTML plus CSS layout constraints instead of preserving the scaffold literally.
+- If a table is only serving alignment with invisible borders, convert it into CSS Grid or Flexbox. Do not rebuild it as a visible HTML `<table>`.
 - If the source implies staged reveals, carry that build order into markup with simple step metadata such as `data-step`.
 - Preserve speaker notes or hidden source metadata in a non-visual aside when available.
 - Differentiate asset implementation on purpose: SVG or CSS for scalable vector-like marks, `<img>` for raster visuals, and background layers for ambient full-slide fields.
+- Use [media-fit-rules.md](./references/media-fit-rules.md) before implementing image-led slides, sample boards, galleries, or screenshot-heavy pages.
+- Never default diagrams, comparison boards, or character sheets to `object-fit: cover`. If the source shows the full board, the rebuild should too unless the crop is documented as safe.
+- When a row or strip of peer images is meant to compare like with like, keep a consistent media window height and align the text blocks to a shared baseline.
 - Prefer container-query units such as `cqi`, `cqw`, or `cqh` for slide-synchronized typography and spacing. If container queries are unavailable, use a documented slide-relative fallback such as carefully chosen `vmin` tokens.
 - Provide:
   - a table of contents or slide index
@@ -285,12 +346,17 @@ When internal reference decks are available, study them before choosing a visual
 
 - Visually inspect every generated slide.
 - Check for overlap, occlusion, clipping, inconsistent spacing, dead links, and broken navigation.
+- Run a render-integrity audit, not just a visual skim. Explicitly verify title line counts, image visibility, clipping, media height consistency, and text overlap.
 - Check that each slide still fits as one bounded frame without native browser scrollbars appearing.
 - Check that aspect ratio, scale, and spacing feel synchronized instead of behaving like unrelated webpage modules.
 - Check for awkward heading wraps in both languages, especially on covers and opening analytical slides.
 - Check that title bands read as a deck-wide system. Most body slides should not wrap unless the copy genuinely requires it.
 - Measure title containers in DevTools or an equivalent inspector. The rendered title region should not drop below `55%` of the slide width unless the archetype explicitly justifies it.
 - Compare low-confidence slides against the source again before accepting any stylized redraw.
+- On diagram slides, compare the rebuilt primitive grammar with the source: overlap stays overlap, matrices stay matrices, labels stay attached to the right shape, and the primitive count does not silently drift.
+- On image-led slides, compare visible area against the source: if the source shows the full artwork, board, or contact sheet, the rebuild must not crop away meaningful content.
+- On gallery and strip slides, check that peer media share consistent display windows and that copy blocks align cleanly.
+- On PPT-authored structure-heavy slides, verify that invisible construction aids were not accidentally turned into audience-visible elements and that semantic composites were not flattened into generic cards.
 - Check for repeated information across headline, body, stat chips, and diagram labels. Remove duplicated layers instead of polishing them.
 - Check for duplicate navigation or duplicated overview content in the opening sequence.
 - Check for dead zones: large blank regions that do not improve focus, pacing, or composition.
@@ -303,6 +369,7 @@ When internal reference decks are available, study them before choosing a visual
 - Run a design-quality pass, not only a correctness pass. Ask whether the page has a strong focal point, readable hierarchy within two seconds, controlled density, and typography that feels intentional.
 - Reject pages that are merely neat but visually generic. If the composition could be mistaken for a default AI slide template, redesign it.
 - Write `50-qa/qa-report.md`.
+- Write `50-qa/render-audit.json`.
 - Fix issues before delivery. Do not treat QA as documentation only.
 - Prefer `scripts/check_stage_gates.py <workspace-dir>` to confirm required stage artifacts exist before final delivery.
 
@@ -311,13 +378,17 @@ When internal reference decks are available, study them before choosing a visual
 - Read [artifacts.md](./references/artifacts.md) when creating or reviewing stage outputs.
 - Read [style-judgment.md](./references/style-judgment.md) when deciding visual direction.
 - Read [fidelity-checks.md](./references/fidelity-checks.md) when deciding what must stay logically faithful and what may change.
+- Read [ppt-structure-decoder.md](./references/ppt-structure-decoder.md) when the source uses PowerPoint grouping, shape drawing, connectors, or transparent-border layout hacks.
 - Read [reference-deck-learning.md](./references/reference-deck-learning.md) when the user provides internal reference decks.
 - Read [external-design-lessons.md](./references/external-design-lessons.md) when the user asks for broader craft improvement or when title hierarchy, redundancy, and page control are weak.
 - Read [web-presentation-rules.md](./references/web-presentation-rules.md) when implementing slide containers, scaling behavior, playback constraints, or mobile degradation for web-based presentations.
 - Read [typography-rules.md](./references/typography-rules.md) when title fit, body measure, or bilingual robustness is at risk.
+- Read [layout-first-method.md](./references/layout-first-method.md) and [layout-spine-template.md](./references/layout-spine-template.md) before planning slide layouts.
+- Read [media-fit-rules.md](./references/media-fit-rules.md) when image cropping, board visibility, screenshot treatment, or sample-strip alignment is at risk.
 - Read [layout-patterns.md](./references/layout-patterns.md) and [page-archetypes.md](./references/page-archetypes.md) before writing page specs.
 - Read [bilingual-toggle-pattern.md](./references/bilingual-toggle-pattern.md) before implementing the language switcher.
 - Read [visual-parsing-playbook.md](./references/visual-parsing-playbook.md) when the source is a PDF, screenshot set, or otherwise depends on visual parsing and slicing.
+- Read [render-integrity-checks.md](./references/render-integrity-checks.md) before signing off the pilot or the full deck.
 
 ## Trigger Examples
 

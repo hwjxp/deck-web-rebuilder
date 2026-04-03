@@ -20,6 +20,7 @@ Use archetypes as reusable slide blueprints. Every slide in `page-specs.json` mu
 - anchor: tonal field, line, or single motif
 - density: low
 - title region: wide and calm
+- title behavior: preserve the source line count when the source divider clearly used a single-line headline
 - anti-patterns: body copy that turns the divider into a normal page
 
 ### `diagram-plus-insight`
@@ -29,6 +30,7 @@ Use archetypes as reusable slide blueprints. Every slide in `page-specs.json` mu
 - anchor: one centered or dominant proof object
 - density: medium
 - title region: full text band above or beside the proof
+- diagram rule: preserve the source proof grammar such as overlap, nesting, sequence, or matrix
 - anti-patterns: diagram plus stat pills plus repeated conclusion blocks
 
 ### `timeline`
@@ -56,6 +58,7 @@ Use archetypes as reusable slide blueprints. Every slide in `page-specs.json` mu
 - anchor: proof strip, gallery rail, or main metric cluster
 - density: medium
 - title region: top-aligned, max two lines
+- media rule: peer media windows should align in height and copy blocks should sit on a controlled baseline
 - anti-patterns: disconnected helper cards under a floating headline
 
 ### `showcase`
@@ -65,6 +68,7 @@ Use archetypes as reusable slide blueprints. Every slide in `page-specs.json` mu
 - anchor: one hero sample
 - density: low to medium
 - title region: close to the hero, not detached
+- media rule: if the source shows a full board or artwork, prefer `contain` or a documented safe crop over aggressive `cover`
 - anti-patterns: several equal-sized samples with no primary image
 
 ### `decision-close`

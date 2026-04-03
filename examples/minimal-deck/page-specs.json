@@ -26,6 +26,8 @@
         "posture": "single-line",
         "prefer_no_wrap": true,
         "max_lines": 1,
+        "source_line_count": 1,
+        "line_count_strategy": "preserve-source",
         "preferred_width_ch": 30,
         "min_container_ratio": 0.66,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -46,16 +48,68 @@
           "asset_id": "cover-field",
           "role": "hero-image",
           "action": "redraw",
+          "fit_policy": "redraw",
+          "must_show_full_frame": true,
+          "visible_area_min_pct": 100,
           "notes": "Tonal field and proof number cluster."
         }
       ],
+      "layout_plan": {
+        "dominant_reading_path": "hero-to-note",
+        "layout_hypothesis": "Use one calm hero field with a wide title band and a compact proof chip cluster as counterweight.",
+        "zone_skeleton": [
+          {
+            "zone_name": "HERO-ZONE",
+            "zone_purpose": "background field",
+            "content_rule": "one dominant field only"
+          },
+          {
+            "zone_name": "TITLE-ZONE",
+            "zone_purpose": "headline band",
+            "content_rule": "one strong headline plus optional subtitle"
+          },
+          {
+            "zone_name": "ANNOTATION-ZONE",
+            "zone_purpose": "proof chips",
+            "content_rule": "compact supporting signals only"
+          }
+        ],
+        "title_band_pct": 22,
+        "anchor_region_pct": 58,
+        "support_region_pct": 8,
+        "whitespace_reserve_pct": 12,
+        "max_body_blocks": 2,
+        "copy_budget_en": 34,
+        "copy_budget_zh": 28,
+        "group_preservation_rules": [
+          {
+            "group_id": "cover-shell",
+            "policy": "convert-to-css-layout",
+            "reason": "The cover shell is a compositional frame, not a literal grouped export."
+          }
+        ],
+        "diagram_redraw_policy": "n/a",
+        "layout_confidence": "high"
+      },
       "proportional_spatial_map": {
-        "title_region_pct": 68,
-        "anchor_region_pct": 70,
-        "support_region_pct": 16,
+        "title_region_pct": 22,
+        "anchor_region_pct": 58,
+        "support_region_pct": 8,
         "notes": "Left-heavy title mass with proof chip cluster on the right."
       },
       "primary_proof_device": "hero-image",
+      "diagram_contract": {
+        "relation_type": "none",
+        "primitive_count": 0,
+        "must_preserve_overlap": false,
+        "label_anchor_strategy": "none"
+      },
+      "media_layout_contract": {
+        "default_fit_policy": "redraw",
+        "uniform_media_height": "n/a",
+        "allow_occlusion": false,
+        "clip_tolerance": "none"
+      },
       "bilingual_mode": "toggle",
       "mobile_degradation_plan": {
         "order": ["scale-slide", "trim-decoration", "tighten-spacing", "rewrite-copy"],
@@ -65,6 +119,14 @@
       "negative_space_strategy": "Use one calm field around the title to create authority.",
       "counterweight_strategy": "Balance the title with a right-side proof chip cluster.",
       "animation_intent": ["section-transition"],
+      "render_audit_targets": {
+        "verify_title_lines": true,
+        "verify_overlap": true,
+        "verify_clipping": true,
+        "verify_occlusion": true,
+        "verify_media_alignment": false,
+        "verify_diagram_semantics": false
+      },
       "forbidden_patterns": ["duplicate-agenda", "narrow-title-column", "dead-zone"]
     },
     {
@@ -89,6 +151,8 @@
         "posture": "single-line",
         "prefer_no_wrap": true,
         "max_lines": 1,
+        "source_line_count": 1,
+        "line_count_strategy": "preserve-source",
         "preferred_width_ch": 32,
         "min_container_ratio": 0.62,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -109,16 +173,68 @@
           "asset_id": "loop-diagram",
           "role": "diagram",
           "action": "redraw",
+          "fit_policy": "redraw",
+          "must_show_full_frame": true,
+          "visible_area_min_pct": 100,
           "notes": "Primary proof object."
         }
       ],
+      "layout_plan": {
+        "dominant_reading_path": "center-out",
+        "layout_hypothesis": "Keep the loop centered as the proof object and attach the note panel as secondary interpretation.",
+        "zone_skeleton": [
+          {
+            "zone_name": "TITLE-ZONE",
+            "zone_purpose": "headline band",
+            "content_rule": "headline above the proof object"
+          },
+          {
+            "zone_name": "VISUAL-ZONE",
+            "zone_purpose": "central proof",
+            "content_rule": "one centered diagram only"
+          },
+          {
+            "zone_name": "ANNOTATION-ZONE",
+            "zone_purpose": "attached note",
+            "content_rule": "short interpretation only"
+          }
+        ],
+        "title_band_pct": 16,
+        "anchor_region_pct": 54,
+        "support_region_pct": 18,
+        "whitespace_reserve_pct": 12,
+        "max_body_blocks": 2,
+        "copy_budget_en": 42,
+        "copy_budget_zh": 34,
+        "group_preservation_rules": [
+          {
+            "group_id": "loop-core",
+            "policy": "redraw-as-svg",
+            "reason": "The loop acts as one semantic composite and must stay unified."
+          }
+        ],
+        "diagram_redraw_policy": "redraw-as-svg",
+        "layout_confidence": "high"
+      },
       "proportional_spatial_map": {
-        "title_region_pct": 64,
-        "anchor_region_pct": 56,
-        "support_region_pct": 28,
+        "title_region_pct": 16,
+        "anchor_region_pct": 54,
+        "support_region_pct": 18,
         "notes": "Diagram centered, note panel attached to the lower-right."
       },
       "primary_proof_device": "diagram",
+      "diagram_contract": {
+        "relation_type": "sequence",
+        "primitive_count": 3,
+        "must_preserve_overlap": false,
+        "label_anchor_strategy": "attached-callout"
+      },
+      "media_layout_contract": {
+        "default_fit_policy": "redraw",
+        "uniform_media_height": "n/a",
+        "allow_occlusion": false,
+        "clip_tolerance": "none"
+      },
       "bilingual_mode": "toggle",
       "mobile_degradation_plan": {
         "order": ["scale-slide", "trim-decoration", "tighten-spacing", "reflow-layout"],
@@ -128,7 +244,15 @@
       "negative_space_strategy": "Keep the outer field quiet so the loop remains the visual magnet.",
       "counterweight_strategy": "Use the attached note panel and title band as the balancing mass.",
       "animation_intent": ["focus-shift", "proof-build"],
-      "forbidden_patterns": ["narrow-title-column", "double-proof-layer", "generic-cardification"]
+      "render_audit_targets": {
+        "verify_title_lines": true,
+        "verify_overlap": true,
+        "verify_clipping": true,
+        "verify_occlusion": true,
+        "verify_media_alignment": false,
+        "verify_diagram_semantics": true
+      },
+      "forbidden_patterns": ["narrow-title-column", "double-proof-layer", "generic-cardification", "diagram-semantic-drift"]
     },
     {
       "slide_id": "slide-03",
@@ -152,6 +276,8 @@
         "posture": "single-line",
         "prefer_no_wrap": true,
         "max_lines": 1,
+        "source_line_count": 1,
+        "line_count_strategy": "preserve-source",
         "preferred_width_ch": 34,
         "min_container_ratio": 0.6,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -172,16 +298,68 @@
           "asset_id": "rollout-timeline",
           "role": "diagram",
           "action": "redraw",
+          "fit_policy": "redraw",
+          "must_show_full_frame": true,
+          "visible_area_min_pct": 100,
           "notes": "Horizontal sequence rail."
         }
       ],
+      "layout_plan": {
+        "dominant_reading_path": "timeline-sequence",
+        "layout_hypothesis": "Keep the rail and its milestones as the main sequence object, with the note sitting below it.",
+        "zone_skeleton": [
+          {
+            "zone_name": "TITLE-ZONE",
+            "zone_purpose": "headline band",
+            "content_rule": "short headline before the sequence"
+          },
+          {
+            "zone_name": "VISUAL-ZONE",
+            "zone_purpose": "timeline rail",
+            "content_rule": "sequence nodes and connectors"
+          },
+          {
+            "zone_name": "ANNOTATION-ZONE",
+            "zone_purpose": "timeline note",
+            "content_rule": "short labels only"
+          }
+        ],
+        "title_band_pct": 16,
+        "anchor_region_pct": 48,
+        "support_region_pct": 22,
+        "whitespace_reserve_pct": 14,
+        "max_body_blocks": 2,
+        "copy_budget_en": 38,
+        "copy_budget_zh": 32,
+        "group_preservation_rules": [
+          {
+            "group_id": "timeline-rail",
+            "policy": "redraw-as-svg",
+            "reason": "Timeline nodes and connectors act as one sequence grammar."
+          }
+        ],
+        "diagram_redraw_policy": "redraw-as-svg",
+        "layout_confidence": "high"
+      },
       "proportional_spatial_map": {
-        "title_region_pct": 60,
-        "anchor_region_pct": 64,
+        "title_region_pct": 16,
+        "anchor_region_pct": 48,
         "support_region_pct": 22,
         "notes": "Timeline takes the center band, note below."
       },
       "primary_proof_device": "timeline",
+      "diagram_contract": {
+        "relation_type": "sequence",
+        "primitive_count": 4,
+        "must_preserve_overlap": false,
+        "label_anchor_strategy": "attached-callout"
+      },
+      "media_layout_contract": {
+        "default_fit_policy": "redraw",
+        "uniform_media_height": "n/a",
+        "allow_occlusion": false,
+        "clip_tolerance": "none"
+      },
       "bilingual_mode": "toggle",
       "mobile_degradation_plan": {
         "order": ["scale-slide", "trim-decoration", "tighten-spacing", "reflow-layout"],
@@ -191,7 +369,15 @@
       "negative_space_strategy": "Leave quiet space above and below the rail so sequence reads cleanly.",
       "counterweight_strategy": "Use milestone chips and the title band to hold the composition.",
       "animation_intent": ["reveal-sequence"],
-      "forbidden_patterns": ["narrow-title-column", "generic-cardification", "long-scroll-mobile"]
+      "render_audit_targets": {
+        "verify_title_lines": true,
+        "verify_overlap": true,
+        "verify_clipping": true,
+        "verify_occlusion": true,
+        "verify_media_alignment": false,
+        "verify_diagram_semantics": true
+      },
+      "forbidden_patterns": ["narrow-title-column", "generic-cardification", "long-scroll-mobile", "diagram-semantic-drift"]
     },
     {
       "slide_id": "slide-04",
@@ -215,6 +401,8 @@
         "posture": "single-line",
         "prefer_no_wrap": true,
         "max_lines": 1,
+        "source_line_count": 1,
+        "line_count_strategy": "preserve-source",
         "preferred_width_ch": 32,
         "min_container_ratio": 0.6,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -235,16 +423,68 @@
           "asset_id": "hero-sample",
           "role": "support-image",
           "action": "keep",
+          "fit_policy": "contain",
+          "must_show_full_frame": true,
+          "visible_area_min_pct": 100,
           "notes": "Use one strong product visual instead of several equal samples."
         }
       ],
+      "layout_plan": {
+        "dominant_reading_path": "left-to-right",
+        "layout_hypothesis": "Use one large sample on the left and a compact explanation rail on the right.",
+        "zone_skeleton": [
+          {
+            "zone_name": "VISUAL-ZONE",
+            "zone_purpose": "sample field",
+            "content_rule": "one dominant sample only"
+          },
+          {
+            "zone_name": "TITLE-ZONE",
+            "zone_purpose": "headline band",
+            "content_rule": "headline at top of the note rail"
+          },
+          {
+            "zone_name": "INSIGHT-ZONE",
+            "zone_purpose": "note rail",
+            "content_rule": "2-4 lines of interpretation"
+          }
+        ],
+        "title_band_pct": 18,
+        "anchor_region_pct": 50,
+        "support_region_pct": 22,
+        "whitespace_reserve_pct": 10,
+        "max_body_blocks": 2,
+        "copy_budget_en": 36,
+        "copy_budget_zh": 28,
+        "group_preservation_rules": [
+          {
+            "group_id": "sample-frame",
+            "policy": "convert-to-css-layout",
+            "reason": "Frame chrome can become CSS while the sample stays full-frame."
+          }
+        ],
+        "diagram_redraw_policy": "n/a",
+        "layout_confidence": "high"
+      },
       "proportional_spatial_map": {
-        "title_region_pct": 62,
-        "anchor_region_pct": 66,
-        "support_region_pct": 28,
+        "title_region_pct": 18,
+        "anchor_region_pct": 50,
+        "support_region_pct": 22,
         "notes": "Large sample left, note panel right."
       },
       "primary_proof_device": "hero-image",
+      "diagram_contract": {
+        "relation_type": "none",
+        "primitive_count": 0,
+        "must_preserve_overlap": false,
+        "label_anchor_strategy": "none"
+      },
+      "media_layout_contract": {
+        "default_fit_policy": "contain",
+        "uniform_media_height": "n/a",
+        "allow_occlusion": false,
+        "clip_tolerance": "none"
+      },
       "bilingual_mode": "toggle",
       "mobile_degradation_plan": {
         "order": ["scale-slide", "trim-decoration", "tighten-spacing", "rewrite-copy"],
@@ -254,7 +494,15 @@
       "negative_space_strategy": "Let the sample breathe and keep margins quiet around it.",
       "counterweight_strategy": "Hold the far side with one compact note stack.",
       "animation_intent": ["focus-shift"],
-      "forbidden_patterns": ["narrow-title-column", "floating-card-row", "dead-zone"]
+      "render_audit_targets": {
+        "verify_title_lines": true,
+        "verify_overlap": true,
+        "verify_clipping": true,
+        "verify_occlusion": true,
+        "verify_media_alignment": false,
+        "verify_diagram_semantics": false
+      },
+      "forbidden_patterns": ["narrow-title-column", "floating-card-row", "dead-zone", "aggressive-image-crop"]
     },
     {
       "slide_id": "slide-05",
@@ -278,6 +526,8 @@
         "posture": "single-line",
         "prefer_no_wrap": true,
         "max_lines": 1,
+        "source_line_count": 1,
+        "line_count_strategy": "preserve-source",
         "preferred_width_ch": 34,
         "min_container_ratio": 0.64,
         "fallback_strategy": ["rewrite", "restack", "widen-title-region", "shrink-last"]
@@ -298,16 +548,68 @@
           "asset_id": "decision-panel",
           "role": "table",
           "action": "redraw",
+          "fit_policy": "redraw",
+          "must_show_full_frame": true,
+          "visible_area_min_pct": 100,
           "notes": "One compact decision structure."
         }
       ],
+      "layout_plan": {
+        "dominant_reading_path": "title-to-proof",
+        "layout_hypothesis": "Use a decisive close statement over one compact decision panel so the ending resolves cleanly.",
+        "zone_skeleton": [
+          {
+            "zone_name": "TITLE-ZONE",
+            "zone_purpose": "closing statement",
+            "content_rule": "one decisive ask only"
+          },
+          {
+            "zone_name": "EVIDENCE-ZONE",
+            "zone_purpose": "decision panel",
+            "content_rule": "one compact close structure"
+          },
+          {
+            "zone_name": "ANNOTATION-ZONE",
+            "zone_purpose": "support note",
+            "content_rule": "short follow-through labels only"
+          }
+        ],
+        "title_band_pct": 28,
+        "anchor_region_pct": 50,
+        "support_region_pct": 14,
+        "whitespace_reserve_pct": 8,
+        "max_body_blocks": 2,
+        "copy_budget_en": 34,
+        "copy_budget_zh": 30,
+        "group_preservation_rules": [
+          {
+            "group_id": "decision-panel",
+            "policy": "redraw-as-svg",
+            "reason": "The close panel acts as one compact proof object."
+          }
+        ],
+        "diagram_redraw_policy": "redraw-as-svg",
+        "layout_confidence": "high"
+      },
       "proportional_spatial_map": {
-        "title_region_pct": 66,
-        "anchor_region_pct": 54,
-        "support_region_pct": 26,
+        "title_region_pct": 28,
+        "anchor_region_pct": 50,
+        "support_region_pct": 14,
         "notes": "Closing statement on top, decision panel below."
       },
       "primary_proof_device": "table",
+      "diagram_contract": {
+        "relation_type": "table",
+        "primitive_count": 3,
+        "must_preserve_overlap": false,
+        "label_anchor_strategy": "row-header"
+      },
+      "media_layout_contract": {
+        "default_fit_policy": "redraw",
+        "uniform_media_height": "n/a",
+        "allow_occlusion": false,
+        "clip_tolerance": "none"
+      },
       "bilingual_mode": "toggle",
       "mobile_degradation_plan": {
         "order": ["scale-slide", "trim-decoration", "tighten-spacing", "rewrite-copy"],
@@ -317,7 +619,15 @@
       "negative_space_strategy": "Use top breathing room to make the close feel decisive rather than crowded.",
       "counterweight_strategy": "Decision panel anchors the lower field and closes the deck.",
       "animation_intent": ["reveal-sequence", "section-transition"],
-      "forbidden_patterns": ["narrow-title-column", "double-proof-layer", "floating-card-row"]
+      "render_audit_targets": {
+        "verify_title_lines": true,
+        "verify_overlap": true,
+        "verify_clipping": true,
+        "verify_occlusion": true,
+        "verify_media_alignment": false,
+        "verify_diagram_semantics": true
+      },
+      "forbidden_patterns": ["narrow-title-column", "double-proof-layer", "floating-card-row", "text-overlap"]
     }
   ]
 }

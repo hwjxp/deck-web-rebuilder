@@ -89,6 +89,13 @@
     "language_toggle": "sticky visible toggle in header chrome",
     "deep_links": "slides use #slide-NN anchors"
   },
+  "media_policy": {
+    "default_raster_fit": "contain",
+    "diagram_fit": "redraw",
+    "board_fit": "contain",
+    "allow_safe_crop_only_with_justification": true,
+    "gallery_uniform_height_default": "strict"
+  },
   "negative_space_policy": {
     "default_blank_ratio": "22-30%",
     "counterweight_rule": "blank fields must be held by one hero object, proof rail, or note panel"

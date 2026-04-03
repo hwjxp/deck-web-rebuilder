@@ -25,12 +25,15 @@ Treat typography as a layout system, not as a final cosmetic pass.
 
 - ordinary slides: max 2 lines, but prefer 1 line
 - covers and section dividers: max 3 lines
+- for `polish` and `reverse-engineer` work, record the source title line count before rewriting the page
+- if a source framing or section-divider title was clearly designed as one line, preserve that single-line intent unless the copy is rewritten on purpose
 - English titles above roughly `18-22` words should be rewritten
 - Chinese titles above roughly `24-28` characters should be rewritten
 - if a title fits clearly on one line, do not force a second line for visual drama
 - ordinary slides should usually keep the title region at `60-75%` of slide width
 - do not use a narrow title column to force dramatic breaks
 - fallback order: `rewrite -> restack -> widen-title-region -> shrink-last`
+- on divider and low-copy hero slides, prefer a modest size reduction within the approved scale before allowing a new line break
 - avoid Chinese line starts with orphan punctuation when reflowing
 - keep punctuation and emphasis spacing consistent across Chinese and English copy
 
@@ -58,11 +61,13 @@ Treat typography as a layout system, not as a final cosmetic pass.
 - side-by-side bilingual layouts are allowed only on genuinely low-density slides
 - English and Chinese title fitting should be evaluated independently
 - language toggle must not change the width of the title region
+- do not let one language keep a single line while the other wraps because the title box was designed too narrowly in the first place
 
 ## QA Questions
 
 - can the viewer distinguish title, subtitle, and body within two seconds
 - is the title container wide enough to look deliberate in both languages
 - does the title behave like a slide-level orientation system instead of a local box label
+- does the rebuilt title keep the source line-count intent on framing or divider slides
 - does the body measure still feel readable on large screens
 - do captions stay secondary without becoming microscopic

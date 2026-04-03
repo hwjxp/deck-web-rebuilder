@@ -14,6 +14,7 @@
     "spacing_scale",
     "grid",
     "page_chrome",
+    "media_policy",
     "negative_space_policy",
     "bilingual_policy",
     "motion_policy",
@@ -446,6 +447,51 @@
         },
         "deep_links": {
           "type": "string"
+        }
+      }
+    },
+    "media_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "default_raster_fit",
+        "diagram_fit",
+        "board_fit",
+        "allow_safe_crop_only_with_justification",
+        "gallery_uniform_height_default"
+      ],
+      "properties": {
+        "default_raster_fit": {
+          "type": "string",
+          "enum": [
+            "contain",
+            "safe-crop",
+            "cover"
+          ]
+        },
+        "diagram_fit": {
+          "type": "string",
+          "enum": [
+            "redraw",
+            "contain"
+          ]
+        },
+        "board_fit": {
+          "type": "string",
+          "enum": [
+            "contain",
+            "safe-crop"
+          ]
+        },
+        "allow_safe_crop_only_with_justification": {
+          "type": "boolean"
+        },
+        "gallery_uniform_height_default": {
+          "type": "string",
+          "enum": [
+            "strict",
+            "flexible"
+          ]
         }
       }
     },

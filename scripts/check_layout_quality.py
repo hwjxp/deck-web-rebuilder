@@ -9,6 +9,7 @@ from _deck_checks_common import PAGE_SPECS_JSON, load_workspace_json
 
 LOGIC_HEAVY_ROLES = {"framework", "process", "timeline", "proof"}
 GRID_PATTERNS = {"GRID-2COL", "GRID-3COL"}
+VISUAL_ASSET_ROLES = {"hero-image", "support-image", "diagram", "chart", "table", "screenshot"}
 
 
 def run_check(workspace: Path) -> list[str]:
@@ -48,6 +49,8 @@ def run_check(workspace: Path) -> list[str]:
 
         if slide.get("role") not in {"cover", "section-divider", "decision-close"} and title.get("max_lines", 0) > 2:
             issues.append(f"{slide_id}: ordinary slide titles should stay within two lines")
+        if slide.get("role") in {"section-divider", "framing"} and title.get("source_line_count") == 1 and title.get("max_lines", 0) != 1:
+            issues.append(f"{slide_id}: source-authored one-line framing slides should not wrap by default")
 
         if slide.get("visual_anchor") == "stat-cluster" and slide.get("layout_pattern") == "HERO-FULL":
             issues.append(f"{slide_id}: hero-full layouts should not rely on a floating stat cluster as the main anchor")
@@ -57,6 +60,14 @@ def run_check(workspace: Path) -> list[str]:
 
         if slide.get("density") == "low" and anchor_pct < 35 and support_pct < 20:
             issues.append(f"{slide_id}: composition reserves too much unsupported empty field and risks a dead zone")
+
+        assets = [asset for asset in slide.get("assets", []) if asset.get("role") in VISUAL_ASSET_ROLES and asset.get("action") != "remove"]
+        media_contract = slide.get("media_layout_contract", {})
+        if len(assets) >= 3 and slide.get("layout_pattern") in GRID_PATTERNS and media_contract.get("uniform_media_height") != "strict":
+            issues.append(f"{slide_id}: comparison or strip-style media pages should enforce strict media height alignment")
+        if slide.get("visual_anchor") in {"showcase-sample", "hero-image"} and any(asset.get("must_show_full_frame") for asset in assets):
+            if media_contract.get("clip_tolerance") != "none":
+                issues.append(f"{slide_id}: full-frame showcase assets should not permit clipping by default")
 
     return issues
 

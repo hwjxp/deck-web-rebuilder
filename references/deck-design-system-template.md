@@ -115,6 +115,7 @@ Hard rules:
 
 - ordinary slides: titles max 2 lines and should prefer 1 line when possible
 - covers and section dividers: titles max 3 lines
+- source-authored divider headlines should preserve a one-line source posture unless deliberately rewritten
 - treat the title as a slide-level headline band rather than a local card label
 - ordinary slides should usually keep the title region above `60%` of the slide width
 - never set the title region below `55%` of the slide width just to force dramatic wrapping
@@ -149,7 +150,16 @@ Negative space policy:
 - deep-link style:
 - chapter markers:
 
-## 9. Bilingual Policy
+## 9. Media Policy
+
+- default raster fit:
+- diagram fit:
+- board / contact-sheet fit:
+- allow safe crop only when:
+- gallery uniform height default:
+- focal-point rule:
+
+## 10. Bilingual Policy
 
 - default mode: `toggle`
 - side-by-side allowed only on:
@@ -158,7 +168,7 @@ Negative space policy:
 - fallback order:
 - language switching animation:
 
-## 10. Motion and Mobile
+## 11. Motion and Mobile
 
 - motion level:
 - reduced motion behavior:
@@ -168,7 +178,7 @@ Negative space policy:
   3. tighten spacing
   4. rewrite or reflow only as last resort
 
-## 11. Do / Don't
+## 12. Do / Don't
 
 Do:
 

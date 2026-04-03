@@ -12,28 +12,39 @@ if str(SCRIPTS_DIR) not in sys.path:
 
 from _deck_checks_common import DESIGN_SCHEMA, DESIGN_SYSTEM_JSON, load_workspace_json, maybe_validate_with_jsonschema
 from check_bilingual_fit import run_check as run_bilingual_fit_check
+from check_composition_graph import run_check as run_composition_graph_check
 from check_layout_quality import run_check as run_layout_quality_check
+from check_layout_plan import run_check as run_layout_plan_check
+from check_media_fit import run_check as run_media_fit_check
 from check_page_specs import run_check as run_page_spec_check
+from check_render_audit import run_check as run_render_audit_check
 from check_redundancy import run_check as run_redundancy_check
 
 
 REQUIRED_FILES = [
     Path("00-source/input-profile.md"),
     Path("00-source/visual-regions.json"),
+    Path("00-source/composition-graph.json"),
     Path("10-understanding/deck-brief.md"),
     Path("12-reference-study/reference-deck-notes.md"),
     Path("12-reference-study/reference-deck-notes.yaml"),
+    Path("20-logic/visual-structure-map.md"),
     Path("20-logic/storyline.md"),
+    Path("20-logic/authoring-intent.md"),
     Path("20-logic/confidence-report.md"),
     Path("30-assets/asset-register.md"),
     Path("30-assets/asset-lineage.json"),
     Path("35-strategy/rebuild-strategy.md"),
     Path("35-strategy/deck-design-system.md"),
     Path("35-strategy/deck-design-system.json"),
+    Path("35-strategy/layout-rationale.md"),
+    Path("35-strategy/layout-plan.json"),
+    Path("40-rebuild/layout-spine.md"),
     Path("40-rebuild/page-specs.md"),
     Path("40-rebuild/page-specs.json"),
     Path("40-rebuild/pilot-selection.md"),
     Path("50-qa/visual-checklist.md"),
+    Path("50-qa/render-audit.json"),
 ]
 
 GENERATED_DECK_FILES = {
@@ -60,6 +71,8 @@ FIXED_LAYOUT_PX_PATTERN = re.compile(
 )
 SLIDE_SPEC_HEADING_PATTERN = re.compile(r"^##\s+slide-[0-9]{2}\b", re.IGNORECASE | re.MULTILINE)
 SLIDE_ID_PATTERN = re.compile(r"slide-[0-9]{2}", re.IGNORECASE)
+LAYOUT_SPINE_ENTRY_PATTERN = re.compile(r"^slide-\d{2}\s*\|\s*[A-Z0-9-]+\s*\|\s*[a-z-]+\s*\|\s*.+$", re.MULTILINE)
+VISUAL_STRUCTURE_HEADING_PATTERN = re.compile(r"^##\s+Slide\s+\d+\b", re.MULTILINE)
 
 
 def is_meaningful(path: Path) -> bool:
@@ -141,6 +154,8 @@ def check_design_system_markdown(path: Path) -> list[str]:
         issues.append("deck-design-system.md should include title and bilingual rules, not only mood-board prose")
     if "title band" not in text.lower() and "title-band" not in text.lower():
         issues.append("deck-design-system.md should define a title-band system, not only local title styling")
+    if "media policy" not in text.lower() and "default raster fit" not in text.lower():
+        issues.append("deck-design-system.md should define deck-level media fit rules, not let image cropping default to CSS")
     return issues
 
 
@@ -163,6 +178,48 @@ def check_confidence_report(path: Path) -> list[str]:
     if "follow-up" not in lowered and "next action" not in lowered and "action" not in lowered:
         issues.append("confidence-report.md should note follow-up actions for uncertain slides or relations")
     return issues
+
+
+def check_visual_structure_map(path: Path) -> list[str]:
+    text = read_text(path)
+    lowered = text.lower()
+    issues: list[str] = []
+    if len(VISUAL_STRUCTURE_HEADING_PATTERN.findall(text)) < 3:
+        issues.append("visual-structure-map.md should contain at least 3 concrete slide entries")
+    for keyword in ("visual structures detected", "rebuild decisions"):
+        if keyword not in lowered:
+            issues.append(f"visual-structure-map.md should explicitly include `{keyword}` sections")
+    return issues
+
+
+def check_authoring_intent(path: Path) -> list[str]:
+    text = read_text(path)
+    lowered = text.lower()
+    issues: list[str] = []
+    for keyword in ("semantic composite", "layout scaffold", "pseudo-table", "connector", "z-order"):
+        if keyword not in lowered and keyword.replace("-", " ") not in lowered:
+            issues.append(f"authoring-intent.md should explicitly discuss `{keyword}`")
+    if len(" ".join(meaningful_lines(text))) <= 180:
+        issues.append("authoring-intent.md should explain deck-level authoring hacks in real prose, not just headings")
+    return issues
+
+
+def check_layout_rationale(path: Path) -> list[str]:
+    text = read_text(path)
+    lowered = text.lower()
+    issues: list[str] = []
+    for keyword in ("pattern", "rhythm", "title", "media", "anchor"):
+        if keyword not in lowered:
+            issues.append(f"layout-rationale.md should explicitly include `{keyword}`")
+    return issues
+
+
+def check_layout_spine(path: Path) -> list[str]:
+    text = read_text(path)
+    entries = LAYOUT_SPINE_ENTRY_PATTERN.findall(text)
+    if len(entries) < 3:
+        return ["layout-spine.md should contain at least 3 concrete `slide-NN | PATTERN | role | intent` entries"]
+    return []
 
 
 def check_page_specs_markdown(path: Path) -> list[str]:
@@ -228,6 +285,24 @@ def check_asset_lineage_json(workspace: Path) -> list[str]:
     return issues
 
 
+def check_composition_graph_json(workspace: Path) -> list[str]:
+    issues: list[str] = []
+    relative = Path("00-source/composition-graph.json")
+    try:
+        data = load_workspace_json(workspace, relative)
+    except Exception as exc:
+        return [f"could not read {relative}: {exc}"]
+
+    groups = data.get("groups", [])
+    if not groups:
+        return ["composition-graph.json should contain at least one decoded group or scaffold"]
+
+    intents = {group.get("group_intent") for group in groups}
+    if "layout-scaffold" not in intents and "semantic-composite" not in intents:
+        issues.append("composition-graph.json should capture at least one scaffold or semantic composite on non-trivial decks")
+    return issues
+
+
 def check_design_system_json(workspace: Path) -> list[str]:
     issues: list[str] = []
     try:
@@ -267,6 +342,14 @@ def check_design_system_json(workspace: Path) -> list[str]:
     if "toggle" not in language_toggle:
         issues.append("deck-design-system.json should define a persistent language toggle in page chrome")
 
+    media_policy = data.get("media_policy", {})
+    if media_policy.get("default_raster_fit") == "cover":
+        issues.append("deck-design-system.json should not default raster imagery to `cover`")
+    if media_policy.get("diagram_fit") != "redraw":
+        issues.append("deck-design-system.json should default diagrams to redraw, not raster cropping")
+    if media_policy.get("board_fit") != "contain":
+        issues.append("deck-design-system.json should preserve boards and sheets with `contain` by default")
+
     return issues
 
 
@@ -275,10 +358,14 @@ def run_script_checks(workspace: Path) -> list[str]:
     for issue in check_design_system_json(workspace):
         issues.append(f"design system: {issue}")
     for label, runner in (
+        ("composition graph", run_composition_graph_check),
+        ("layout plan", run_layout_plan_check),
         ("page specs", run_page_spec_check),
         ("layout quality", run_layout_quality_check),
         ("bilingual fit", run_bilingual_fit_check),
+        ("media fit", run_media_fit_check),
         ("redundancy", run_redundancy_check),
+        ("render audit", run_render_audit_check),
     ):
         for issue in runner(workspace):
             issues.append(f"{label}: {issue}")
@@ -348,11 +435,16 @@ def main() -> int:
         content_issues.extend(check_input_profile(workspace / "00-source/input-profile.md"))
         content_issues.extend(check_deck_brief(workspace / "10-understanding/deck-brief.md"))
         content_issues.extend(check_reference_notes_yaml(workspace / "12-reference-study/reference-deck-notes.yaml"))
+        content_issues.extend(check_visual_structure_map(workspace / "20-logic/visual-structure-map.md"))
+        content_issues.extend(check_authoring_intent(workspace / "20-logic/authoring-intent.md"))
         content_issues.extend(check_confidence_report(workspace / "20-logic/confidence-report.md"))
         content_issues.extend(check_design_system_markdown(workspace / "35-strategy/deck-design-system.md"))
+        content_issues.extend(check_layout_rationale(workspace / "35-strategy/layout-rationale.md"))
+        content_issues.extend(check_layout_spine(workspace / "40-rebuild/layout-spine.md"))
         content_issues.extend(check_page_specs_markdown(workspace / "40-rebuild/page-specs.md"))
         content_issues.extend(check_pilot_selection(workspace / "40-rebuild/pilot-selection.md"))
         content_issues.extend(check_visual_regions_json(workspace))
+        content_issues.extend(check_composition_graph_json(workspace))
         content_issues.extend(check_asset_lineage_json(workspace))
         script_issues = run_script_checks(workspace)
 
