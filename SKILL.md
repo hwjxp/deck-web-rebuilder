@@ -328,7 +328,10 @@ When internal reference decks are available, study them before choosing a visual
 - Use [media-fit-rules.md](./references/media-fit-rules.md) before implementing image-led slides, sample boards, galleries, or screenshot-heavy pages.
 - Never default diagrams, comparison boards, or character sheets to `object-fit: cover`. If the source shows the full board, the rebuild should too unless the crop is documented as safe.
 - When a row or strip of peer images is meant to compare like with like, keep a consistent media window height and align the text blocks to a shared baseline.
+- Use responsive image markup deliberately on heavy decks: prefer `srcset` and `sizes` for resolution switching, and use `<picture>` only when a deliberately approved alternate crop or art-directed asset is needed.
+- Eager-load assets needed for the opening slide or first viewport. Lazy-load later-slide images and embeds when they are genuinely off-screen, and reserve their space so playback does not jump.
 - Prefer container-query units such as `cqi`, `cqw`, or `cqh` for slide-synchronized typography and spacing. If container queries are unavailable, use a documented slide-relative fallback such as carefully chosen `vmin` tokens.
+- If the deck shell renders many hidden slides, lightweight performance containment such as `content-visibility: auto` is acceptable on non-active slide wrappers or overview surfaces when paired with a documented intrinsic-size fallback. Do not let it interfere with the active slide, focus, or capture flow.
 - Provide:
   - a table of contents or slide index
   - direct slide jumps
@@ -337,7 +340,9 @@ When internal reference decks are available, study them before choosing a visual
   - bilingual toggle
   - PDF export path
   - reduced-motion handling
+- Build the PDF export path intentionally. Prefer a dedicated print mode using `@media print`, and use `@page` when orientation, page size, or margins require explicit control.
 - Keep animations purposeful. Use motion to reveal logic, sequence, emphasis, or transitions, not decoration.
+- Respect `prefers-reduced-motion`. Reduced-motion mode should preserve reveal order and comprehension while removing non-essential movement.
 - On mobile, preserve presentation logic before web convenience. Scale the slide first, simplify non-essential chrome second, and only collapse multi-column layouts when readability would otherwise fail.
 - Avoid slide-internal scrolling.
 - When a stronger example is helpful, inspect `examples/minimal-deck/` before inventing the shell from scratch.

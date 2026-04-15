@@ -60,6 +60,15 @@ If any answer is risky, default back to `contain` or reserve more layout space.
 - for sample strips, separate the media window from the text card so alignment can stay stable
 - for diagrams masquerading as images, prefer redraw over crop
 
+## Responsive Source Rules
+
+- if the same evidence image must stay semantically identical across devices but needs different resolutions, use `srcset` and `sizes` instead of shipping one oversized raster everywhere
+- if mobile genuinely needs a different crop or alternate rendering, treat that as an art-direction decision and use `<picture>` with an explicitly approved alternate asset
+- never use responsive source switching to silently replace a proof board with a tighter crop that changes what the slide proves
+- eager-load images visible on the first rendered slide; lazy-load images for later slides or off-screen overview modes
+- always provide explicit `width` and `height` or an equivalent reserved box for lazy-loaded slide images so the deck shell does not jump during playback
+- when a board, sheet, or screenshot must stay fully visible, the responsive strategy may change file size but must not change the visible extent
+
 ## QA Questions
 
 - is the visible image area faithful to the source intent
@@ -72,3 +81,5 @@ If any answer is risky, default back to `contain` or reserve more layout space.
 - [MDN: object-fit](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit)
 - [MDN: Replaced element properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Images/Replaced_element_properties)
 - [MDN: object-position](https://developer.mozilla.org/en-US/docs/Web/CSS/object-position)
+- [MDN: Using responsive images in HTML](https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Responsive_images)
+- [MDN: Lazy loading](https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading)

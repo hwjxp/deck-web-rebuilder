@@ -63,6 +63,15 @@ Treat typography as a layout system, not as a final cosmetic pass.
 - language toggle must not change the width of the title region
 - do not let one language keep a single line while the other wraps because the title box was designed too narrowly in the first place
 
+## Implementation Notes
+
+- solve title fit in this order: widen the title region, tighten adjacent decoration, rewrite copy, then reduce type size as the last resort
+- use `text-wrap: balance` for short slide titles, divider heads, and captions when you want cleaner multi-line balance without inventing manual breaks
+- do not rely on `text-wrap: balance` to excuse an undersized title band; the container still needs enough width to reflect the source posture
+- reserve `text-wrap: pretty` for longer supporting text where orphan control matters more than raw speed; avoid it on deck-wide title systems
+- if browser support or language behavior is uncertain, preserve line-count intent with a wider zone and an explicit copy edit before inserting manual `<br>` tags
+- if a title must stay single-line for fidelity, prefer modest size reduction plus width recovery before allowing overflow clipping or an accidental second line
+
 ## QA Questions
 
 - can the viewer distinguish title, subtitle, and body within two seconds
@@ -71,3 +80,7 @@ Treat typography as a layout system, not as a final cosmetic pass.
 - does the rebuilt title keep the source line-count intent on framing or divider slides
 - does the body measure still feel readable on large screens
 - do captions stay secondary without becoming microscopic
+
+## Useful Official References
+
+- [MDN: text-wrap](https://developer.mozilla.org/en-US/docs/Web/CSS/text-wrap)
